@@ -22,6 +22,8 @@ public class TwoSum {
         int [] numsArr2 = {3,2,4};
         int target3 = 6;
         int [] numsArr3 = {3,3};
+        int target4 = 13;
+        int [] numsArr4 = {1, 8, 3, 9, 5};
 
         System.out.println("\n1st Check:\n- - - - - - - -");
         holder.getArray(numsArr1);
@@ -39,6 +41,12 @@ public class TwoSum {
         holder.getArray(numsArr3);
         System.out.println("Target: " + target3);
         result = holder.getSolution1(numsArr3, target3);
+        holder.getArray(result);
+
+        System.out.println("\n4th Check:\n- - - - - - - -");
+        holder.getArray(numsArr4);
+        System.out.println("Target: " + target4);
+        result = holder.getSolution1(numsArr4, target4);
         holder.getArray(result);
 
     }
