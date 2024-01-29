@@ -29,7 +29,7 @@ public class CubeConundrum {
 
     static final String fileName = "puzzleInput.txt";
 
-    public static void readPuzzle(String fileName) {
+    public static int readPuzzle(String fileName) {
 
         InputStream file = CubeConundrum.class.getClassLoader().getResourceAsStream(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -39,8 +39,10 @@ public class CubeConundrum {
             // if > 12 for Red -> false
             // if > 13 for Green -> false
             // if > 14 for Blue -> false
+            if (str.contains("Game")) { return false;}
+
             var arrSplitString = str.split(" ");
-            arrSplitString.
+
             if ((arrSplitString[1].contains("Red")
                     && Integer.parseInt(arrSplitString[0]) > 12)
                     || (arrSplitString[1].contains("Green")
@@ -65,6 +67,7 @@ public class CubeConundrum {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return result;
 
     }
 

@@ -2,6 +2,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class CubeConundrumTest {
 
     @Test
@@ -9,7 +11,8 @@ class CubeConundrumTest {
         // Arrange
         String fileName = "puzzleInput.txt";
         // Act
-        CubeConundrum.readPuzzle(fileName);
+        int actualResult = CubeConundrum.readPuzzle(fileName);
         // Assert
+        assertEquals(4, actualResult);
     }
 }
