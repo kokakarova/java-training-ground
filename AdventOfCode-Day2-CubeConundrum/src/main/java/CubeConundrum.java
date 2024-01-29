@@ -5,6 +5,9 @@
  *      14 blue cubes?
  */
 public class CubeConundrum {
+
+    private int gameNumber;
+
     static int maxRedCubes = 12;
     static int maxGreenCubes = 13;
     static int maxBlueCubes = 14;
