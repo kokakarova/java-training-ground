@@ -17,7 +17,7 @@ public class DigitsAndLetters {
             int secondDigit = 0;
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
                 for (int i = 0; i < s.length(); i++) {
-                    if (s.charAt(i) == '1')
+                    if (s.charAt(i) == '1'
                             || s.substring(i, i + 6).contains("one")) {
                         firstDigit = 1;
                         break;
