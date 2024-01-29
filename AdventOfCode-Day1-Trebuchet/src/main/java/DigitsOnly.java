@@ -11,7 +11,6 @@ public class DigitsOnly {
         try (InputStream file = Trebuchet.class.getClassLoader().getResourceAsStream(fileName)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
 
-
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
                 String digitString = s.replaceAll("[^0-9]", "");
 
