@@ -39,10 +39,11 @@ public class CubeConundrum {
             // if > 12 for Red -> false
             // if > 13 for Green -> false
             // if > 14 for Blue -> false
+            System.out.println(str);
             if (str.contains("Game")) { return false;}
 
             var arrSplitString = str.split(" ");
-
+            Arrays.stream(arrSplitString).forEach(System.out::println);
             if ((arrSplitString[1].contains("Red")
                     && Integer.parseInt(arrSplitString[0]) > 12)
                     || (arrSplitString[1].contains("Green")
@@ -57,9 +58,11 @@ public class CubeConundrum {
 
         try {
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-                var arrString1 = s.split("[:,;]");
+                String[] arrString1 = s.split("[:,;]");
+
                 boolean isPossible = Stream.of(arrString1)
                         .filter(checkIfIsPossible).isParallel();
+                System.out.println(isPossible);
                 if (isPossible) {
                     result += Integer.parseInt(arrString1[0].split(" ")[1]);
                 }
