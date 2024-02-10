@@ -19,10 +19,7 @@ public class Solution {
         if (arr1.length == 0 || arr2.length == 0) {
             return arr1;
         }
-        List<Integer> arrList2 = new ArrayList<>();
-        for (int i : arr2) {
-            arrList2.add(i);
-        }
+        List<Integer> arrList2 = Arrays.stream(arr2).boxed().toList();
         return Arrays.stream(arr1)
                 .filter(n -> !(arrList2.contains(n)))
                 .toArray();
