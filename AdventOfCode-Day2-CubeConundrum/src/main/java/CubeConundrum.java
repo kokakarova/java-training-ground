@@ -1,12 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.io.*;
 
 /**
  * which games would have been possible if the bag contained only
@@ -22,57 +14,66 @@ import java.util.stream.Stream;
 public class CubeConundrum {
 
     private int gameNumber;
-    static final String fileName = "puzzleInput.txt";
+    private static final int MAX_RED_CUBES = 12;
+    private static final int MAX_GREEN_CUBES = 13;
+    private static final int MAX_BLUE_CUBES = 14;
 
     public static int readPuzzle(String fileName) {
-
-        InputStream file = CubeConundrum.class.getClassLoader().getResourceAsStream(fileName);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(file));
         int result = 0;
-//        final Predicate<String> checkIfIsPossible = (str) -> {
-            // if > 12 for Red -> false
-            // if > 13 for Green -> false
-            // if > 14 for Blue -> false
-//            System.out.println(str);
-//            if (str.contains("Game")) { return false;}
-//
-//            var arrSplitString = str.split(" ");
-//            Arrays.stream(arrSplitString).forEach(System.out::println);
-//            if ((arrSplitString[1].contains("Red")
-//                    && Integer.parseInt(arrSplitString[0]) > 12)
-//                    || (arrSplitString[1].contains("Green")
-//                    && Integer.parseInt(arrSplitString[0]) > 13)
-//                    || (arrSplitString[1].contains("Blue")
-//                    && Integer.parseInt(arrSplitString[0]) > 14)) {
-//
-//                return false;
-//            }
-//            return true;
-//        };
-
-        try {
+        try (InputStream file = CubeConundrum.class.getClassLoader().getResourceAsStream(fileName);
+        ) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
                 String[] arrString1 = s.split("[:,;]");
-                int i = 0;
-                for (String st: arrString1) {
-                    System.out.println("arrString1 at position " + i + ": " + st);
-                    i++;
-                }
-//                boolean isPossible = Stream.of(arrString1)
-//                        .filter(checkIfIsPossible).isParallel();
-//                System.out.println(isPossible);
-//                if (isPossible) {
-//                    result += Integer.parseInt(arrString1[0].split(" ")[1]);
-//                }
+                result += checkGame(arrString1);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (NullPointerException | IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
-        return 0;
 
+        return result;
     }
 
-    public static int getGameNumber(String[] gameStringArr) {
-        return Integer.parseInt(gameStringArr[0].split(" ")[1]);
+    private static int checkGame(String[] gameSets) {
+        int gameNumber = getGameNumber(gameSets[0]);
+        boolean okRed = true;
+        boolean okGreen = true;
+        boolean okBlue = true;
+        for (int i = 1; i < gameSets.length; i++) {
+            String[] numAndColorSet = gameSets[i].split(" ");
+            if (numAndColorSet[2].contains("red") && okRed) {
+                okRed = checkRed(numAndColorSet[1]);
+            }
+            if (numAndColorSet[2].contains("green") && okGreen) {
+                okGreen = checkGreen(numAndColorSet[1]);
+            }
+            if (numAndColorSet[2].contains("blue") && okBlue) {
+                okBlue = checkBlue(numAndColorSet[1]);
+            }
+        }
+        if (okRed && okGreen && okBlue) {
+            return gameNumber;
+        }
+        return 0;
+    }
+
+    private static boolean checkBlue(String gameSetBlue) {
+        int res = Integer.parseInt(gameSetBlue);
+        return  (res <= MAX_BLUE_CUBES);
+    }
+
+    private static boolean checkGreen(String gameSetGreen) {
+        int res = Integer.parseInt(gameSetGreen);
+        return (res <= MAX_GREEN_CUBES);
+    }
+
+    private static boolean checkRed(String gameSetRed) {
+        int res = Integer.parseInt(gameSetRed);
+        return (res <= MAX_RED_CUBES);
+    }
+
+    public static int getGameNumber(String gameNumberString) {
+        return Integer.parseInt(gameNumberString.split(" ")[1]);
     }
 }
