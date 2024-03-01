@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CubeConundrumTest {
@@ -11,7 +9,7 @@ class CubeConundrumTest {
         // Arrange
         String testArr = "Game 1";
         // Act
-        int actualResult = CubeConundrum.getGameNumber(testArr);
+        int actualResult = PossibleGame.getGameNumber(testArr);
         // Assert
         assertEquals(1, actualResult);
     }
@@ -20,7 +18,7 @@ class CubeConundrumTest {
         // Arrange
         String fileName = "testFile.txt";
         // Act
-        int actualResult = CubeConundrum.readPuzzle(fileName);
+        int actualResult = PossibleGame.readPuzzle(fileName);
         // Assert
         assertEquals(5, actualResult);
     }
