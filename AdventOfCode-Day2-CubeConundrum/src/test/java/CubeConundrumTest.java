@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CubeConundrumTest {
 
     @Test
-    void firstTest() {
+    void shouldReturn1forGame_1() {
         // Arrange
-        String fileName = "puzzleInput.txt";
+        String[] testArr = {"Game 1"};
         // Act
-        int actualResult = CubeConundrum.readPuzzle(fileName);
+        int actualResult = CubeConundrum.getGameNumber(testArr);
         // Assert
-        assertEquals(4, actualResult);
+        assertEquals(1, actualResult);
     }
 }
