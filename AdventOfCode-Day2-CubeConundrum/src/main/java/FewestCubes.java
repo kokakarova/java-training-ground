@@ -3,6 +3,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+//game1: green 14, blue 7, red 1 = 98
+//game2: green 3, blue 7, red 4 = 84
+//game3: green 12, blue 10, red 6 = 720
+//        = 902
+
 public class FewestCubes {
 
     public static int readPuzzle(String fileName) {
@@ -11,47 +16,82 @@ public class FewestCubes {
         ) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-                String[] arrString1 = s.split("[:,;]");
-                result *= checkGame(arrString1);
+                String[] gameLine = s.split("[:,;]");
+                result += checkGame(gameLine);
             }
         } catch (NullPointerException | IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        return 0;
+        return result;
     }
 
     public static int checkGame(String[] gameArray) {
-        int lowestRed = 1;
-        int lowestGreen = 1;
-        int lowestBlue = 1;
+        int highestRed = 1;
+        int highestGreen = 1;
+        int highestBlue = 1;
+        int countRed = 0;
+        int countGreen = 0;
+        int countBlue = 0;
 
-        for (int i = 1; i < gameArray.length; i++) {
-            String[] numAndColorSet = gameArray[i].split(" ");
-            System.out.println("numAndColorSet[" + i + "] = " + numAndColorSet[i]);
-            if (numAndColorSet[2].contains("red")) {
-                lowestRed = checkRed(numAndColorSet[1]);
+        for (int i = 0; i < gameArray.length; i++) {
+            String[] gameSet = gameArray[i].split(" ");
+//            System.out.println("gameLine length= " + gameArray.length);
+//            System.out.println("i = " + i + " Game Array at i = " + gameArray[i]);
+//            System.out.println("gameSet = " + Arrays.toString(gameSet));
+//            System.out.println("numAndColorSet[" + i + "] = " + gameSet[i]);
+            if (i == 0) {
+                continue;
             }
-            if (numAndColorSet[2].contains("green")) {
-                lowestGreen = checkGreen(numAndColorSet[1]);
+            if (gameSet[2].contains("red")) {
+                countRed++;
+                if (countRed == 1) {
+                    highestRed = Integer.parseInt(gameSet[1]);
+                } else {
+                    highestRed = Math.max(highestRed, Integer.parseInt(gameSet[1]));
+                }
+//                System.out.println("lowestRed = " + lowestRed);
             }
-            if (numAndColorSet[2].contains("blue")) {
-                lowestBlue = checkBlue(numAndColorSet[1]);
+            if (gameSet[2].contains("green")) {
+                countGreen++;
+                if (countGreen == 1) {
+                    highestGreen = Integer.parseInt(gameSet[1]);
+                } else {
+                    highestGreen = Math.max(highestGreen, Integer.parseInt(gameSet[1]));
+                }
+//                System.out.println("lowestGreen = " + lowestGreen);
+            }
+            if (gameSet[2].contains("blue")) {
+                countBlue++;
+                if (countBlue == 1) {
+                    highestBlue = Integer.parseInt(gameSet[1]);
+                } else {
+                    highestBlue = Math.max(highestBlue, Integer.parseInt(gameSet[1]));
+                }
+//                System.out.println("highestBlue = " + highestBlue);
             }
         }
-        return lowestRed * lowestGreen * lowestBlue;
+//        System.out.println("lowestRed = " + lowestRed);
+//        System.out.println("lowestGreen = " + lowestGreen);
+//        System.out.println("highestBlue = " + highestBlue);
+        return (highestRed * highestGreen * highestBlue);
     }
-    public static int checkRed(String reds) {
-        int result = 1;
-        return Math.min(result, Integer.parseInt(reds));
-    }
-    public static int checkGreen(String greens) {
-        int result = 1;
-        return Math.min(result, Integer.parseInt(greens));
-    }
-    public static int checkBlue(String blues) {
-        int result = 1;
-        return Math.min(result, Integer.parseInt(blues));
-    }
+
+//    public static int checkRed(String reds) {
+//        System.out.println("reds = " + reds);
+//        int result = 1;
+//        return Math.min(result, Integer.parseInt(reds));
+//    }
+//
+//    public static int checkGreen(String greens) {
+//        int result = 1;
+//        return Math.min(result, Integer.parseInt(greens));
+//    }
+//
+//    public static int checkBlue(String blues) {
+//        System.out.println("blues = " + blues);
+//        int result = 1;
+//        return Math.min(result, Integer.parseInt(blues));
+//    }
 }
 

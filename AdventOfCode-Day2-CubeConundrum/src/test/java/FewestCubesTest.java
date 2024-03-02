@@ -7,6 +7,6 @@ class FewestCubesTest {
     void shouldReturn37() {
         String fileName = "testFile.txt";
         int expectedResult = FewestCubes.readPuzzle(fileName);
-        assertEquals(37,expectedResult);
+        assertEquals(902,expectedResult);
     }
 }
