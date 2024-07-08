@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="backspace-sring-compare" />
+        <module name="AdventOfCode-Day2-CubeConundrum" />
+        <module name="untitled" />
+        <module name="ArrayDiff" />
+        <module name="AdventOfCode-Day1-Trebuchet" />
+        <module name="GearRatios" />
+        <module name="SumOfArraySingles" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
