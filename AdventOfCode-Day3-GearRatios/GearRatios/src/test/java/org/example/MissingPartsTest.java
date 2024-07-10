@@ -2,14 +2,11 @@ package org.example;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MissingPartsTest {
 
-    MissingParts missingParts = new MissingParts();
+    CalculateMissingParts missingParts = new CalculateMissingParts();
 
 //    @Test
 //    void shouldReturn7() {
@@ -38,5 +35,6 @@ class MissingPartsTest {
 //        HashMap<Integer, List<Integer>> actualResult = missingParts.addElements(charArray);
 //        assertEquals(2, actualResult.size());
 //    }
+
 
 }
