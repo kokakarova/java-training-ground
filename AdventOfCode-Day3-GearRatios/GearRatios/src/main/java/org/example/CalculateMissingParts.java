@@ -6,7 +6,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Data
 public class CalculateMissingParts {
@@ -52,7 +54,12 @@ public class CalculateMissingParts {
                     numbers.addNumbersToMap(lineNumber, i, intValue);
                 }
             } else { // if it's not a '.' nor a digit, it's a special character
-
+                // check previous line
+                boolean addNumFromPrevLine = numbers.isNextToNumber(lineNumber - STEP, i);
+                boolean addNumFromSameLine = numbers.isNextToNumber(lineNumber, i);
+                if (addNumFromPrevLine) {
+                    addNumsFromPrevLine(lineNumber, i);
+                }
             }
         }
     }
@@ -75,6 +82,16 @@ public class CalculateMissingParts {
         setAdditionPerformedLastTurn(true);
     }
 
+    private void addNumsFromPrevLine(int lineNumber, int index) {
+        List<Integer> digitsToAdd = new ArrayList<>();
+        HashMap<Integer, Integer> indexesAndValsForLine = numbers.getNumbersMap().get(lineNumber - STEP);
+        boolean digitLeft = true;
+        boolean digitRight = true;
+        int iteration = 1;
+        while (digitLeft || digitRight) {
+
+        }
+    }
 
 }
     
