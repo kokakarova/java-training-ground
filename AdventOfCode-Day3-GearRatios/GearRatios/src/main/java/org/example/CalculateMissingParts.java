@@ -15,16 +15,14 @@ public class CalculateMissingParts {
 
     public SpecialChars specialChars = new SpecialChars();
     public Numbers numbers = new Numbers();
-    // final sum
     private double totalSum = 0;
-    // constant step - one place/line before or after the index
     private final int STEP = 1;
     private int decaMultiplier = 0;
     private boolean additionPerformedLastTurn = false;
-//    private static final String fileName = "puzzleFile.txt";
 
     public void readFromFile(String fileName) throws IOException {
         try (InputStream file = GearRatios.class.getClassLoader().getResourceAsStream(fileName)) {
+            assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             int i = 1;
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
@@ -47,35 +45,39 @@ public class CalculateMissingParts {
             }
             if (Character.isDigit(lineToCharsArray[i])) {
                 handleDigits(lineNumber, i, lineToCharsArray[i]);
-
-            } else { // if it's not a '.' nor a digit, it's a special character
-                // check previous line
-                HashMap<Integer, List<Integer>> specialCharsMap = specialChars.getSpecialChars();
-                if (specialCharsMap.containsKey(lineNumber)) {
-                    List<Integer> innerList = specialCharsMap.get(lineNumber);
-                    innerList.add(i);
-                    specialCharsMap.put(lineNumber, innerList);
-                    specialChars.setSpecialChars(specialCharsMap);
-                } else {
-                    List<Integer> innerList = new ArrayList<>();
-                    innerList.add(i);
-                    specialCharsMap.put(lineNumber, innerList);
-                    specialChars.setSpecialChars(specialCharsMap);
-                }
-                boolean addNumFromPrevLine = numbers.isNextToNumber(lineNumber - STEP, i);
-                if (addNumFromPrevLine) {
-                    addNumsFromPrevLine(lineNumber - STEP, i);
-                }
-                boolean addNumFromSameLine = numbers.isNextToNumber(lineNumber, i);
-                if (addNumFromSameLine) {
-                    addNumsFromSameLine(lineNumber, i);
-                }
+            } else {
+                handleSpecialCharacters(lineNumber, i);
             }
         }
     }
 
-    public void addDigitToSum(int lineNumber, int index, int value) {
-        int amountAtCurrentIndexToSet = (int) (getTotalSum() + value * Math.pow(10, decaMultiplier));
+    private void handleDigits(int lineNumber, int index, char digitChar) {
+        int charIntValue = Character.getNumericValue(digitChar);
+        if (specialChars.isNextToSpecialChar(lineNumber, index) || additionPerformedLastTurn) {
+            addDigitToSum(lineNumber, index, charIntValue);
+        } else {
+            numbers.addToNumbersMap(lineNumber, index, charIntValue);
+        }
+        decaMultiplier++;
+    }
+
+    private void handleSpecialCharacters(int lineNumber, int i) {
+// check previous line
+        setDecaMultiplier(0);
+        setAdditionPerformedLastTurn(false);
+        specialChars.addSpecialCharacterToMap(lineNumber, i);
+        boolean addNumFromPrevLine = numbers.isNextToNumber(lineNumber - STEP, i);
+        if (addNumFromPrevLine) {
+            addNumsFromPrevLine(lineNumber - STEP, i);
+        }
+        boolean addNumFromSameLine = numbers.isNextToNumber(lineNumber, i);
+        if (addNumFromSameLine) {
+            addNumsFromSameLine(lineNumber, i);
+        }
+    }
+
+    public void addDigitToSum(int lineNumber, int index, int numberValue) {
+        int amountAtCurrentIndexToSet = (int) (getTotalSum() + (numberValue * Math.pow(10, decaMultiplier)));
         if (additionPerformedLastTurn || decaMultiplier == 0) {
             System.out.println("amountAtCurrentIndexToSet = " + amountAtCurrentIndexToSet);
             setTotalSum(amountAtCurrentIndexToSet);
@@ -87,7 +89,7 @@ public class CalculateMissingParts {
             System.out.println("index: " + index);
             for (int i = decaMultiplier - 1, j = 1; i >= 0; i--, j++) {
                 Integer nextDigit = innerNumbersMap.get(index + j);
-                int amountToSet = (int) (getTotalSum() + nextDigit * Math.pow(10, i));
+                int amountToSet = (int) (getTotalSum() + (nextDigit * Math.pow(10, i)));
                 System.out.println("amountToSet = " + amountToSet);
                 setTotalSum(amountToSet);
             }
@@ -97,8 +99,7 @@ public class CalculateMissingParts {
 
     public void addNumsFromPrevLine(int lineNumber, int index) {
         HashMap<Integer, Integer> digitsToAdd = new HashMap();
-        var numbersVar = numbers.getNumbersMap();
-        HashMap<Integer, Integer> innerNumbersMap = numbersVar.get(lineNumber);
+        HashMap<Integer, Integer> innerNumbersMap = numbers.getNumbersMap().get(lineNumber);
         boolean digitLeft = true;
         boolean digitRight = true;
         int iteration = 0;
@@ -120,40 +121,30 @@ public class CalculateMissingParts {
             }
             iteration++;
         }
-        if (!digitsToAdd.isEmpty()) {
-            System.out.println("In addNumsFromPrevLine: ");
-            System.out.println("digitsToAdd = " + digitsToAdd);
-            for (int i = 0, j = digitsToAdd.size() - 1; i < digitsToAdd.size(); i++, j--) {
-                int amountToSet = (int) (getTotalSum() + digitsToAdd.get(i) * Math.pow(10, j));
-                System.out.println("amountToSet = " + amountToSet);
-                setTotalSum(amountToSet);
-            }
-        }
+        addListOfConsecutiveDigits(digitsToAdd);
     }
 
     private void addNumsFromSameLine(int lineNumber, int index) {
-        HashMap<Integer, Integer> digitsToAdd = new HashMap();
+        HashMap<Integer, Integer> digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, (index + 1));
+        System.out.println("digitsToAdd = " + digitsToAdd);
+        addListOfConsecutiveDigits(digitsToAdd);
+    }
+
+    private HashMap<Integer, Integer> getListOfConsecutiveDigitsToAdd(int lineNumber, int index) {
         HashMap<Integer, Integer> numbersVar = numbers.getNumbersMap().get(lineNumber);
-        int iteration = 1;
+        HashMap<Integer, Integer> digitsToAdd = new HashMap<>();
+        int iteration = 0;
         while (numbersVar.containsKey(index + iteration)) {
-            digitsToAdd.put((iteration - 1), numbersVar.get(index + iteration));
+            digitsToAdd.put((iteration), numbersVar.get(index + iteration));
             iteration++;
         }
-        System.out.println("digitsToAdd = " + digitsToAdd);
+        return digitsToAdd;
+    }
+
+    private void addListOfConsecutiveDigits(HashMap<Integer, Integer> digitsToAdd) {
         for (int i = 0, j = digitsToAdd.size() - 1; i < digitsToAdd.size(); i++, j--) {
             setTotalSum(getTotalSum() + (digitsToAdd.get(i) * Math.pow(10, j)));
         }
-    }
-
-    private void handleDigits(int lineNumber, int index, char digitChar) {
-        int charIntValue = Character.getNumericValue(digitChar);
-        if (specialChars.isNextToSpecialChar(lineNumber, index)
-                || additionPerformedLastTurn) {
-            addDigitToSum(lineNumber, index, charIntValue);
-        } else {
-            numbers.addNumbersToMap(lineNumber, index, charIntValue);
-        }
-        decaMultiplier++;
     }
 }
     

@@ -2,6 +2,7 @@ package org.example;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,23 +14,20 @@ public class SpecialChars {
     private final int STEP = 1;
 
     public boolean isNextToSpecialChar(int lineNumber, int index) {
-        // check previous line
         if (lineNumber > 1) {
-            boolean testcheck = checkPreviousLine(lineNumber - STEP, index);
-            if (testcheck) {
+            if (checkPreviousLine(lineNumber - STEP, index)) {
                 return true;
             }
         }
-        // check same line
         return checkSameLine(lineNumber, index);
     }
 
     public boolean checkPreviousLine(int lineNumber, int index) {
         if (specialChars.containsKey(lineNumber)) {
-            List<Integer> charIndexListForLine = specialChars.get(lineNumber);
-            return charIndexListForLine.contains(index)
-                    || charIndexListForLine.contains(index - STEP)
-                    || charIndexListForLine.contains(index + STEP);
+            List<Integer> specialCharsValueList = specialChars.get(lineNumber);
+            return specialCharsValueList.contains(index)
+                    || specialCharsValueList.contains(index - STEP)
+                    || specialCharsValueList.contains(index + STEP);
         }
         return false;
     }
@@ -40,5 +38,15 @@ public class SpecialChars {
             return indexListForLine.contains(index + STEP);
         }
         return false;
+    }
+
+    public void addSpecialCharacterToMap(int lineNumber, int index) {
+        if (specialChars.containsKey(lineNumber)) {
+            specialChars.get(lineNumber).add(index);
+        } else {
+            List<Integer> innerList = new ArrayList<>();
+            innerList.add(index);
+            specialChars.put(lineNumber, innerList);
+        }
     }
 }

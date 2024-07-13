@@ -11,7 +11,7 @@ public class Numbers {
     // constant step - one place/line before or after the index
     private final int STEP = 1;
 
-    public void addNumbersToMap(int lineNumber, int index, Integer value) {
+    public void addToNumbersMap(int lineNumber, int index, Integer value) {
         if (numbersMap.containsKey(lineNumber)) {
             numbersMap.get(lineNumber).put(index, value);
         } else {
@@ -29,9 +29,9 @@ public class Numbers {
     }
 
     private boolean checkThreeIndexes(int lineNumber, int index) {
-        HashMap<Integer, Integer> indexAndValuesForLine = numbersMap.get(lineNumber);
-        return indexAndValuesForLine.containsKey(index)
-                || indexAndValuesForLine.containsKey(index - STEP)
-                || indexAndValuesForLine.containsKey(index + STEP);
+        HashMap<Integer, Integer> innerNumbersMap = numbersMap.get(lineNumber);
+        return innerNumbersMap.containsKey(index)
+                || innerNumbersMap.containsKey(index - STEP)
+                || innerNumbersMap.containsKey(index + STEP);
     }
 }
