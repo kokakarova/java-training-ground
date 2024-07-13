@@ -122,4 +122,14 @@ class MissingPartsTest {
         int actualResult = endSumVal - initialSumVal;
         assertEquals(expectedResult, actualResult);
     }
+    @Test
+    void shouldGet7104ForTotalSum() throws IOException {
+        int initialSumVal = (int) missingParts.getTotalSum();
+        String fileName = "puzzleFileTest-2.txt";
+        missingParts.readFromFile(fileName);
+        int endSumVal = (int) missingParts.getTotalSum();
+        int expectedResult = 7104;
+        int actualResult = endSumVal - initialSumVal;
+        assertEquals(expectedResult, actualResult);
+    }
 }
