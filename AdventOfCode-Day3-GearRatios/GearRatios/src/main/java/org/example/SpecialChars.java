@@ -14,8 +14,9 @@ public class SpecialChars {
 
     public boolean isNextToSpecialChar(int lineNumber, int index) {
         // check previous line
-        if (specialChars.containsKey(lineNumber - STEP)) {
-            if (checkPreviousLine(lineNumber - STEP, index)) {
+        if (lineNumber > 1) {
+            boolean testcheck = checkPreviousLine(lineNumber - STEP, index);
+            if (testcheck) {
                 return true;
             }
         }
@@ -24,14 +25,20 @@ public class SpecialChars {
     }
 
     public boolean checkPreviousLine(int lineNumber, int index) {
-        List<Integer> indexListForLine = specialChars.get(lineNumber);
-        return indexListForLine.contains(index)
-                || indexListForLine.contains(index - STEP)
-                || indexListForLine.contains(index + STEP);
+        if (specialChars.containsKey(lineNumber)) {
+            List<Integer> charIndexListForLine = specialChars.get(lineNumber);
+            return charIndexListForLine.contains(index)
+                    || charIndexListForLine.contains(index - STEP)
+                    || charIndexListForLine.contains(index + STEP);
+        }
+        return false;
     }
 
     public boolean checkSameLine(int lineNumber, int index) {
-        List<Integer> indexListForLine = specialChars.get(lineNumber);
-        return indexListForLine.contains(index + STEP);
+        if (!specialChars.isEmpty() && specialChars.containsKey(lineNumber)) {
+            List<Integer> indexListForLine = specialChars.get(lineNumber);
+            return indexListForLine.contains(index + STEP);
+        }
+        return false;
     }
 }

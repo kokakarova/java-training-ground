@@ -13,22 +13,21 @@ import java.util.List;
 @Data
 public class CalculateMissingParts {
 
-    public SpecialChars specialChars;
-    public Numbers numbers;
+    public SpecialChars specialChars = new SpecialChars();
+    public Numbers numbers = new Numbers();
     // final sum
     private double totalSum = 0;
     // constant step - one place/line before or after the index
     private final int STEP = 1;
     private int decaMultiplier = 0;
     private boolean additionPerformedLastTurn = false;
-    private static final String fileName = "puzzleFile.txt";
+//    private static final String fileName = "puzzleFile.txt";
 
-    public void readFromFile() {
+    public void readFromFile(String fileName) throws IOException {
         try (InputStream file = GearRatios.class.getClassLoader().getResourceAsStream(fileName)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             int i = 1;
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-                System.out.println("Line_" + i + ": " + s);
                 processLine(s, i);
                 i++;
             }
@@ -39,6 +38,7 @@ public class CalculateMissingParts {
 
     public void processLine(String stringLine, int lineNumber) {
         char[] lineToCharsArray = stringLine.toCharArray();
+        System.out.println("line -------------- : " + lineNumber);
         for (int i = lineToCharsArray.length - 1; i >= 0; i--) {
             if (lineToCharsArray[i] == '.') {
                 setDecaMultiplier(0);
@@ -46,52 +46,114 @@ public class CalculateMissingParts {
                 continue;
             }
             if (Character.isDigit(lineToCharsArray[i])) {
-                Integer intValue = Character.getNumericValue(lineToCharsArray[i]);
-                boolean addToSum = specialChars.isNextToSpecialChar(lineNumber, i);
-                if (addToSum || additionPerformedLastTurn) {
-                    addDigitToSum(lineNumber, i, lineToCharsArray[i]);
-                } else {
-                    numbers.addNumbersToMap(lineNumber, i, intValue);
-                }
+                handleDigits(lineNumber, i, lineToCharsArray[i]);
+
             } else { // if it's not a '.' nor a digit, it's a special character
                 // check previous line
+                HashMap<Integer, List<Integer>> specialCharsMap = specialChars.getSpecialChars();
+                if (specialCharsMap.containsKey(lineNumber)) {
+                    List<Integer> innerList = specialCharsMap.get(lineNumber);
+                    innerList.add(i);
+                    specialCharsMap.put(lineNumber, innerList);
+                    specialChars.setSpecialChars(specialCharsMap);
+                } else {
+                    List<Integer> innerList = new ArrayList<>();
+                    innerList.add(i);
+                    specialCharsMap.put(lineNumber, innerList);
+                    specialChars.setSpecialChars(specialCharsMap);
+                }
                 boolean addNumFromPrevLine = numbers.isNextToNumber(lineNumber - STEP, i);
-                boolean addNumFromSameLine = numbers.isNextToNumber(lineNumber, i);
                 if (addNumFromPrevLine) {
-                    addNumsFromPrevLine(lineNumber, i);
+                    addNumsFromPrevLine(lineNumber - STEP, i);
+                }
+                boolean addNumFromSameLine = numbers.isNextToNumber(lineNumber, i);
+                if (addNumFromSameLine) {
+                    addNumsFromSameLine(lineNumber, i);
                 }
             }
         }
     }
 
     public void addDigitToSum(int lineNumber, int index, int value) {
-
-        if (additionPerformedLastTurn) {
-            setTotalSum(getTotalSum() + value * Math.pow(10, decaMultiplier));
-        } else if (decaMultiplier == 0) {
-            setTotalSum(getTotalSum() + value);
+        int amountAtCurrentIndexToSet = (int) (getTotalSum() + value * Math.pow(10, decaMultiplier));
+        if (additionPerformedLastTurn || decaMultiplier == 0) {
+            System.out.println("amountAtCurrentIndexToSet = " + amountAtCurrentIndexToSet);
+            setTotalSum(amountAtCurrentIndexToSet);
         } else {
-            setTotalSum(getTotalSum() + value * Math.pow(10, decaMultiplier));
-            HashMap<Integer, Integer> indexesAndNumberValuesForLine = numbers.getNumbersMap().get(lineNumber);
+            System.out.println("amountAtCurrentIndexToSet = " + amountAtCurrentIndexToSet);
+            setTotalSum(amountAtCurrentIndexToSet);
+            HashMap<Integer, Integer> innerNumbersMap = numbers.getNumbersMap().get(lineNumber);
+            System.out.println("innerNumbersMap = " + innerNumbersMap);
+            System.out.println("index: " + index);
             for (int i = decaMultiplier - 1, j = 1; i >= 0; i--, j++) {
-                Integer nextDigit = indexesAndNumberValuesForLine.get(index + j);
-                setTotalSum(getTotalSum() + nextDigit * Math.pow(10, decaMultiplier));
+                Integer nextDigit = innerNumbersMap.get(index + j);
+                int amountToSet = (int) (getTotalSum() + nextDigit * Math.pow(10, i));
+                System.out.println("amountToSet = " + amountToSet);
+                setTotalSum(amountToSet);
             }
         }
-        decaMultiplier++;
         setAdditionPerformedLastTurn(true);
     }
 
-    private void addNumsFromPrevLine(int lineNumber, int index) {
-        List<Integer> digitsToAdd = new ArrayList<>();
-        HashMap<Integer, Integer> indexesAndValsForLine = numbers.getNumbersMap().get(lineNumber - STEP);
+    public void addNumsFromPrevLine(int lineNumber, int index) {
+        HashMap<Integer, Integer> digitsToAdd = new HashMap();
+        var numbersVar = numbers.getNumbersMap();
+        HashMap<Integer, Integer> innerNumbersMap = numbersVar.get(lineNumber);
         boolean digitLeft = true;
         boolean digitRight = true;
-        int iteration = 1;
+        int iteration = 0;
+        int localListIndex = 0;
         while (digitLeft || digitRight) {
-
+            if (innerNumbersMap.containsKey(index - iteration)) {
+                digitsToAdd.put(localListIndex, innerNumbersMap.get(index - iteration));
+                localListIndex++;
+            } else {
+                digitLeft = false;
+            }
+            if (innerNumbersMap.containsKey(index + iteration)) {
+                if (iteration != 0) {
+                    digitsToAdd.put(localListIndex, innerNumbersMap.get(index + iteration));
+                    localListIndex++;
+                }
+            } else {
+                digitRight = false;
+            }
+            iteration++;
+        }
+        if (!digitsToAdd.isEmpty()) {
+            System.out.println("In addNumsFromPrevLine: ");
+            System.out.println("digitsToAdd = " + digitsToAdd);
+            for (int i = 0, j = digitsToAdd.size() - 1; i < digitsToAdd.size(); i++, j--) {
+                int amountToSet = (int) (getTotalSum() + digitsToAdd.get(i) * Math.pow(10, j));
+                System.out.println("amountToSet = " + amountToSet);
+                setTotalSum(amountToSet);
+            }
         }
     }
 
+    private void addNumsFromSameLine(int lineNumber, int index) {
+        HashMap<Integer, Integer> digitsToAdd = new HashMap();
+        HashMap<Integer, Integer> numbersVar = numbers.getNumbersMap().get(lineNumber);
+        int iteration = 1;
+        while (numbersVar.containsKey(index + iteration)) {
+            digitsToAdd.put((iteration - 1), numbersVar.get(index + iteration));
+            iteration++;
+        }
+        System.out.println("digitsToAdd = " + digitsToAdd);
+        for (int i = 0, j = digitsToAdd.size() - 1; i < digitsToAdd.size(); i++, j--) {
+            setTotalSum(getTotalSum() + (digitsToAdd.get(i) * Math.pow(10, j)));
+        }
+    }
+
+    private void handleDigits(int lineNumber, int index, char digitChar) {
+        int charIntValue = Character.getNumericValue(digitChar);
+        if (specialChars.isNextToSpecialChar(lineNumber, index)
+                || additionPerformedLastTurn) {
+            addDigitToSum(lineNumber, index, charIntValue);
+        } else {
+            numbers.addNumbersToMap(lineNumber, index, charIntValue);
+        }
+        decaMultiplier++;
+    }
 }
     

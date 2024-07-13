@@ -12,9 +12,13 @@ public class Numbers {
     private final int STEP = 1;
 
     public void addNumbersToMap(int lineNumber, int index, Integer value) {
-        HashMap<Integer, Integer> numbersInnerMap = new HashMap<>();
-        numbersInnerMap.put(index, value);
-        numbersMap.put(lineNumber, numbersInnerMap);
+        if (numbersMap.containsKey(lineNumber)) {
+            numbersMap.get(lineNumber).put(index, value);
+        } else {
+            HashMap<Integer, Integer> numbersInnerMap = new HashMap<>();
+            numbersInnerMap.put(index, value);
+            numbersMap.put(lineNumber, numbersInnerMap);
+        }
     }
 
     public boolean isNextToNumber(int lineNumber, int index) {
