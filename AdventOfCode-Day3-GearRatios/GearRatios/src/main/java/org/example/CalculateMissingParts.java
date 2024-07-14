@@ -61,18 +61,16 @@ public class CalculateMissingParts {
         decaMultiplier++;
     }
 
-    private void handleSpecialCharacters(int lineNumber, int i) {
+    private void handleSpecialCharacters(int lineNumber, int index) {
 // check previous line
         setDecaMultiplier(0);
         setAdditionPerformedLastTurn(false);
-        specialChars.addSpecialCharacterToMap(lineNumber, i);
-        boolean addNumFromPrevLine = numbers.isNextToNumber(lineNumber - STEP, i);
-        if (addNumFromPrevLine) {
-            addNumsFromPrevLine(lineNumber - STEP, i);
+        specialChars.addSpecialCharacterToMap(lineNumber, index);
+        if (numbers.isNextToNumber(lineNumber - STEP, index)) {
+            addNumsFromPrevLine(lineNumber - STEP, index);
         }
-        boolean addNumFromSameLine = numbers.isNextToNumber(lineNumber, i);
-        if (addNumFromSameLine) {
-            addNumsFromSameLine(lineNumber, i);
+        if (numbers.isNextToNumber(lineNumber, index)) {
+            addNumsFromSameLine(lineNumber, index);
         }
     }
 
@@ -98,30 +96,84 @@ public class CalculateMissingParts {
     }
 
     public void addNumsFromPrevLine(int lineNumber, int index) {
-        HashMap<Integer, Integer> digitsToAdd = new HashMap();
         HashMap<Integer, Integer> innerNumbersMap = numbers.getNumbersMap().get(lineNumber);
+        HashMap<Integer, Integer> digitsToAdd;
+        if (innerNumbersMap.containsKey(index)) {
+            digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, index);
+            addListOfConsecutiveDigits(digitsToAdd);
+            removeFromNumbersMap(lineNumber, digitsToAdd);
+            return;
+        }
+        if (innerNumbersMap.containsKey(index - STEP)) {
+            digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, index - STEP);
+            addListOfConsecutiveDigits(digitsToAdd);
+            removeFromNumbersMap(lineNumber, digitsToAdd);
+        } else {
+            digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, index + STEP);
+            addListOfConsecutiveDigits(digitsToAdd);
+            removeFromNumbersMap(lineNumber, digitsToAdd);
+        }
+
+//        boolean digitLeft = true;
+//        boolean digitRight = true;
+//        int iterationRight = 0;
+//        int iterationLeft = 0;
+//        List<Integer> digitsToLeft = checkToLeft(lineNumber, index);
+//        List<Integer> digitsToRight =checkIndexAndToRight(lineNumber, index);
+//        while (digitLeft || digitRight) {
+//            if (innerNumbersMap.containsKey(index + iterationLeft) && digitLeft) {
+//                digitsToAdd.put(iterationLeft, innerNumbersMap.get(index + iterationLeft));
+//                indexesToRemoveFromNumbers.add(index + iterationLeft);
+//            } else {
+//                if (iterationLeft != 0) {
+//                    digitLeft = false;
+//                }
+//            }
+//            if (innerNumbersMap.containsKey(index + iterationRight) && digitRight) {
+//                if (iterationRight != 0) {
+//                    digitsToAdd.put(iterationRight, innerNumbersMap.get(index + iterationRight));
+//                    indexesToRemoveFromNumbers.add(index + iterationRight);
+//                    iterationRight++;
+//                }
+//            } else {
+//                if (iterationRight != 0) {
+//                    digitRight = false;
+//                }
+//            }
+//            iterationLeft--;
+//            iterationRight++;
+//        }
+    }
+
+    private HashMap<Integer, Integer> getListOfConsecutiveDigitsToAdd(int lineNumber, int index) {
+        System.out.println("In getListOfConsecutiveDigitsToAdd");
+        HashMap<Integer, Integer> numbersVar = numbers.getNumbersMap().get(lineNumber);
+        HashMap<Integer, Integer> digitsToAdd = new HashMap<>();
+        int iteration = 0;
         boolean digitLeft = true;
         boolean digitRight = true;
-        int iteration = 0;
-        int localListIndex = 0;
         while (digitLeft || digitRight) {
-            if (innerNumbersMap.containsKey(index - iteration)) {
-                digitsToAdd.put(localListIndex, innerNumbersMap.get(index - iteration));
-                localListIndex++;
+            if (numbersVar.containsKey(index + iteration) && digitRight) {
+                digitsToAdd.put((index + iteration), numbersVar.get(index + iteration));
             } else {
-                digitLeft = false;
-            }
-            if (innerNumbersMap.containsKey(index + iteration)) {
                 if (iteration != 0) {
-                    digitsToAdd.put(localListIndex, innerNumbersMap.get(index + iteration));
-                    localListIndex++;
+                    digitRight = false;
                 }
+            }
+            if (numbersVar.containsKey(index - iteration) && digitLeft) {
+                digitsToAdd.put((index - iteration), numbersVar.get(index - iteration));
             } else {
-                digitRight = false;
+                if (iteration != 0) {
+                    digitLeft = false;
+                }
             }
             iteration++;
         }
-        addListOfConsecutiveDigits(digitsToAdd);
+        return digitsToAdd;
+    }
+
+    private void removeFromNumbersMap(int lineNumber, HashMap<Integer, Integer> indexesToRemoveFromNumbers) {
+        indexesToRemoveFromNumbers.forEach((i, v) -> numbers.getNumbersMap().get(lineNumber).remove(i));
     }
 
     private void addNumsFromSameLine(int lineNumber, int index) {
@@ -130,20 +182,12 @@ public class CalculateMissingParts {
         addListOfConsecutiveDigits(digitsToAdd);
     }
 
-    private HashMap<Integer, Integer> getListOfConsecutiveDigitsToAdd(int lineNumber, int index) {
-        HashMap<Integer, Integer> numbersVar = numbers.getNumbersMap().get(lineNumber);
-        HashMap<Integer, Integer> digitsToAdd = new HashMap<>();
-        int iteration = 0;
-        while (numbersVar.containsKey(index + iteration)) {
-            digitsToAdd.put((iteration), numbersVar.get(index + iteration));
-            iteration++;
-        }
-        return digitsToAdd;
-    }
-
     private void addListOfConsecutiveDigits(HashMap<Integer, Integer> digitsToAdd) {
-        for (int i = 0, j = digitsToAdd.size() - 1; i < digitsToAdd.size(); i++, j--) {
+        digitsToAdd.forEach((i, v) -> System.out.println(i + ": " + v));
+        int j = digitsToAdd.size() - 1;
+        for (Integer i : digitsToAdd.keySet()) {
             setTotalSum(getTotalSum() + (digitsToAdd.get(i) * Math.pow(10, j)));
+            j--;
         }
     }
 }
