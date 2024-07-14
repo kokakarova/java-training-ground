@@ -14,10 +14,11 @@ public class SpecialChars {
     private final int STEP = 1;
 
     public boolean isNextToSpecialChar(int lineNumber, int index) {
+        boolean charInPrevLine = false;
         if (lineNumber > 1) {
-            return checkPreviousLine(lineNumber - STEP, index);
+            charInPrevLine = checkPreviousLine(lineNumber - STEP, index);
         }
-        return checkSameLine(lineNumber, index);
+        return checkSameLine(lineNumber, index) || charInPrevLine;
     }
 
     public boolean checkPreviousLine(int lineNumber, int index) {
