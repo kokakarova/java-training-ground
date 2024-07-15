@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 public class FileReader {
 
     CalculateMissingParts missingParts = new CalculateMissingParts();
+    BrokenGears brokenGears = new BrokenGears();
 
     public void readFromFile(String fileName, int part) throws IOException {
         try (InputStream file = GearRatios.class.getClassLoader().getResourceAsStream(fileName)) {
@@ -21,7 +22,7 @@ public class FileReader {
                 if (part == 1) {
                     missingParts.processLine(s, i);
                 } else {
-                    System.out.println("part 2");
+                    brokenGears.processLine(s, i);
                 }
                 i++;
             }
