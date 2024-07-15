@@ -19,20 +19,6 @@ public class CalculateMissingParts {
     private int decaMultiplier = 0;
     private boolean additionPerformedLastTurn = false;
 
-    public void readFromFile(String fileName) throws IOException {
-        try (InputStream file = GearRatios.class.getClassLoader().getResourceAsStream(fileName)) {
-            assert file != null;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-            int i = 1;
-            for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-                processLine(s, i);
-                i++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void processLine(String stringLine, int lineNumber) {
         char[] lineToCharsArray = stringLine.toCharArray();
         System.out.println("line -------------- : " + lineNumber);
