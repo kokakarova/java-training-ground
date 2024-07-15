@@ -6,9 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TreeMap;
 
 @Data
@@ -38,10 +36,10 @@ public class CalculateMissingParts {
     public void processLine(String stringLine, int lineNumber) {
         char[] lineToCharsArray = stringLine.toCharArray();
         System.out.println("line -------------- : " + lineNumber);
+        System.out.println("current sum: " + totalSum);
         for (int i = lineToCharsArray.length - 1; i >= 0; i--) {
             if (lineToCharsArray[i] == '.') {
-                setDecaMultiplier(0);
-                setAdditionPerformedLastTurn(false);
+                handleDot();
                 continue;
             }
             if (Character.isDigit(lineToCharsArray[i])) {
@@ -50,6 +48,11 @@ public class CalculateMissingParts {
                 handleSpecialCharacters(lineNumber, i);
             }
         }
+    }
+
+    private void handleDot() {
+        setDecaMultiplier(0);
+        setAdditionPerformedLastTurn(false);
     }
 
     private void handleDigits(int lineNumber, int index, char digitChar) {
@@ -76,7 +79,7 @@ public class CalculateMissingParts {
     }
 
     public void addDigitToSum(int lineNumber, int index, int numberValue) {
-        int amountAtCurrentIndexToSet = (int) (getTotalSum() + (numberValue * Math.pow(10, decaMultiplier)));
+        double amountAtCurrentIndexToSet = (getTotalSum() + (numberValue * Math.pow(10, decaMultiplier)));
         if (additionPerformedLastTurn || decaMultiplier == 0) {
             setTotalSum(amountAtCurrentIndexToSet);
         } else {
@@ -84,7 +87,7 @@ public class CalculateMissingParts {
             HashMap<Integer, Integer> innerNumbersMap = numbers.getNumbersMap().get(lineNumber);
             for (int i = decaMultiplier - 1, j = 1; i >= 0; i--, j++) {
                 Integer nextDigit = innerNumbersMap.get(index + j);
-                int amountToSet = (int) (getTotalSum() + (nextDigit * Math.pow(10, i)));
+                double amountToSet = getTotalSum() + (nextDigit * Math.pow(10, i));
                 setTotalSum(amountToSet);
             }
         }
@@ -104,7 +107,8 @@ public class CalculateMissingParts {
             digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, index - STEP);
             addListOfConsecutiveDigits(digitsToAdd);
             removeFromNumbersMap(lineNumber, digitsToAdd);
-        } else {
+        }
+        if (innerNumbersMap.containsKey(index + STEP)){
             digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, index + STEP);
             addListOfConsecutiveDigits(digitsToAdd);
             removeFromNumbersMap(lineNumber, digitsToAdd);
