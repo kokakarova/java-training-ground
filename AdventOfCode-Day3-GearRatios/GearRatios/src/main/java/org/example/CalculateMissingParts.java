@@ -101,7 +101,7 @@ public class CalculateMissingParts {
         }
     }
 
-    private TreeMap<Integer, Integer> getListOfConsecutiveDigitsToAdd(int lineNumber, int index) {
+    public TreeMap<Integer, Integer> getListOfConsecutiveDigitsToAdd(int lineNumber, int index) {
         HashMap<Integer, Integer> numbersVar = numbers.getNumbersMap().get(lineNumber);
         TreeMap<Integer, Integer> digitsToAdd = new TreeMap<>();
         int iteration = 0;
