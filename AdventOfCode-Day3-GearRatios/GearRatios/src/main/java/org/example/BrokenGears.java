@@ -2,6 +2,10 @@ package org.example;
 
 import lombok.Data;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +19,21 @@ public class BrokenGears {
     HashMap<Integer, HashMap<Integer, List<Integer>>> gearSymbols = new HashMap<>();
     public Numbers numbers = new Numbers();
     public CalculateMissingParts missingParts = new CalculateMissingParts();
+
+    public void readFromFile(String fileName) throws IOException {
+        try (InputStream file = GearRatios.class.getClassLoader().getResourceAsStream(fileName)) {
+            assert file != null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+            int i = 1;
+            for (String s = reader.readLine(); s != null; s = reader.readLine()) {
+                 processLine(s, i);
+                i++;
+            }
+            calculateTotalSum();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void processLine(String stringLine, int lineNumber) {
         char[] lineToCharsArray = stringLine.toCharArray();
@@ -53,47 +72,75 @@ public class BrokenGears {
             symbols.put(index, adjacentNumbers);
             gearSymbols.put(lineNumber, symbols);
         } else {
-            gearSymbols.get(lineNumber).put(index, adjacentNumbers);
+            List<Integer> gearsInnerList = gearSymbols.get(lineNumber).get(index);
+            if (gearsInnerList == null) {
+                gearSymbols.get(lineNumber).put(index, adjacentNumbers);
+            } else {
+                gearsInnerList.addAll(adjacentNumbers);
+                gearSymbols.get(lineNumber).put(index, gearsInnerList);
+            }
         }
     }
 
-    private List<Integer> getAdjacentNumbers(int lineNumber, int step, int index) {
+    private List<Integer> getAdjacentNumbers(int lineNumber, int lineIndicator, int index) {
         List<Integer> result = new ArrayList<>();
-        int line = lineNumber - STEP;
-        HashMap<Integer, Integer> innerNumbersMap = numbers.getNumbersMap().get(lineNumber);
-        if (innerNumbersMap.containsKey(line)) {
+        int line = lineNumber - lineIndicator;
+        if (numbers.getNumbersMap().containsKey(line)) {
+            HashMap<Integer, Integer> innerNumbersMap = numbers.getNumbersMap().get(line);
             if (innerNumbersMap.containsKey(index)) {
                 result.add(getTheNumbers(line, index));
                 return result;
             }
             if (innerNumbersMap.containsKey(index + STEP)) {
-                result.add(getTheNumbers(line, index + STEP));
+                result.add(getTheNumbers(line, (index + STEP)));
             }
             if (innerNumbersMap.containsKey(index - STEP)) {
-                result.add(getTheNumbers(line, index - STEP));
+                result.add(getTheNumbers(line, (index - STEP)));
             }
         }
         return result;
     }
 
     private int getTheNumbers(int lineNumber, int index) {
-        TreeMap<Integer, Integer> numbersToAdd = missingParts.getListOfConsecutiveDigitsToAdd(lineNumber, index);
+        TreeMap<Integer, Integer> numbersToAdd = numbers.getListOfConsecutiveDigitsToAdd(lineNumber, index);
         return getFullNumber(numbersToAdd);
     }
 
     private int getFullNumber(TreeMap<Integer, Integer> numbersToAdd) {
-        int result = 0;
+        int finalNumber = 0;
         int decaMultiplier = numbersToAdd.size() - 1;
         for (var entry : numbersToAdd.entrySet()) {
-            result += (int) Math.pow(entry.getValue(), decaMultiplier);
+            int number = entry.getValue();
+            finalNumber += number * (int) Math.pow(10, decaMultiplier);
             decaMultiplier--;
         }
-        return result;
+        return finalNumber;
     }
 
     private void handleDigits(int lineNumber, int index, char digit) {
-//        if (specialChars.isNextToSpecialChar(lineNumber - STEP, index)) {
-//
-//        }
+        int charIntValue = Character.getNumericValue(digit);
+        numbers.addToNumbersMap(lineNumber, index, charIntValue);
+    }
+
+    public void calculateTotalSum() {
+        System.out.println("gearSymbols = " + gearSymbols);
+        for (var entry : gearSymbols.entrySet()) {
+            System.out.println("entry = " + entry);
+            int multiplicationResult = 1;
+            System.out.println("entry.getValue() - " + entry.getValue());
+            HashMap<Integer, List<Integer>> test = entry.getValue();
+            System.out.println("test = " + test);
+            for (int i = 0; i < test.size(); i++) {
+                if (test.get(3).size() == 2) {
+                    List<Integer> numbers = test.get(3);
+                    for (var j : numbers) {
+                        multiplicationResult *= j;
+                        System.out.println("multiplicationResult = " + multiplicationResult);
+                    }
+                }
+            }
+            setTotalSum((getTotalSum() + multiplicationResult));
+            System.out.println("in calculateTotalSum(): " + getTotalSum());
+        }
     }
 }

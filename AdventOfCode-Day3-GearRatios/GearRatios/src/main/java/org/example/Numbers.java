@@ -3,6 +3,7 @@ package org.example;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
 @Data
 public class Numbers {
@@ -33,5 +34,33 @@ public class Numbers {
         return innerNumbersMap.containsKey(index)
                 || innerNumbersMap.containsKey(index - STEP)
                 || innerNumbersMap.containsKey(index + STEP);
+    }
+
+    public TreeMap<Integer, Integer> getListOfConsecutiveDigitsToAdd(int lineNumber, int index) {
+        HashMap<Integer, Integer> numbersVar = getNumbersMap().get(lineNumber);
+        TreeMap<Integer, Integer> digitsToAdd = new TreeMap<>();
+        int iteration = 0;
+        boolean digitLeft = true;
+        boolean digitRight = true;
+        while (digitLeft || digitRight) {
+            if (numbersVar.containsKey(index + iteration) && digitRight) {
+                digitsToAdd.put((index + iteration), numbersVar.get(index + iteration));
+            } else {
+                if (iteration != 0) {
+                    digitRight = false;
+                }
+            }
+            if (numbersVar.containsKey(index - iteration) && digitLeft) {
+                if (iteration != 0) {
+                    digitsToAdd.put((index - iteration), numbersVar.get(index - iteration));
+                }
+            } else {
+                if (iteration != 0) {
+                    digitLeft = false;
+                }
+            }
+            iteration++;
+        }
+        return digitsToAdd;
     }
 }

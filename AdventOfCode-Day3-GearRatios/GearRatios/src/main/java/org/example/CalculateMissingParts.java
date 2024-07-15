@@ -19,6 +19,20 @@ public class CalculateMissingParts {
     private int decaMultiplier = 0;
     private boolean additionPerformedLastTurn = false;
 
+    public void readFromFile(String fileName) throws IOException {
+        try (InputStream file = GearRatios.class.getClassLoader().getResourceAsStream(fileName)) {
+            assert file != null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+            int i = 1;
+            for (String s = reader.readLine(); s != null; s = reader.readLine()) {
+                processLine(s, i);
+                i++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void processLine(String stringLine, int lineNumber) {
         char[] lineToCharsArray = stringLine.toCharArray();
         System.out.println("line -------------- : " + lineNumber);
@@ -84,49 +98,21 @@ public class CalculateMissingParts {
         HashMap<Integer, Integer> innerNumbersMap = numbers.getNumbersMap().get(lineNumber);
         TreeMap<Integer, Integer> digitsToAdd;
         if (innerNumbersMap.containsKey(index)) {
-            digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, index);
+            digitsToAdd = numbers.getListOfConsecutiveDigitsToAdd(lineNumber, index);
             addListOfConsecutiveDigits(digitsToAdd);
             removeFromNumbersMap(lineNumber, digitsToAdd);
             return;
         }
         if (innerNumbersMap.containsKey(index - STEP)) {
-            digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, index - STEP);
+            digitsToAdd = numbers.getListOfConsecutiveDigitsToAdd(lineNumber, index - STEP);
             addListOfConsecutiveDigits(digitsToAdd);
             removeFromNumbersMap(lineNumber, digitsToAdd);
         }
         if (innerNumbersMap.containsKey(index + STEP)){
-            digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, index + STEP);
+            digitsToAdd = numbers.getListOfConsecutiveDigitsToAdd(lineNumber, index + STEP);
             addListOfConsecutiveDigits(digitsToAdd);
             removeFromNumbersMap(lineNumber, digitsToAdd);
         }
-    }
-
-    public TreeMap<Integer, Integer> getListOfConsecutiveDigitsToAdd(int lineNumber, int index) {
-        HashMap<Integer, Integer> numbersVar = numbers.getNumbersMap().get(lineNumber);
-        TreeMap<Integer, Integer> digitsToAdd = new TreeMap<>();
-        int iteration = 0;
-        boolean digitLeft = true;
-        boolean digitRight = true;
-        while (digitLeft || digitRight) {
-            if (numbersVar.containsKey(index + iteration) && digitRight) {
-                digitsToAdd.put((index + iteration), numbersVar.get(index + iteration));
-            } else {
-                if (iteration != 0) {
-                    digitRight = false;
-                }
-            }
-            if (numbersVar.containsKey(index - iteration) && digitLeft) {
-                if (iteration != 0) {
-                    digitsToAdd.put((index - iteration), numbersVar.get(index - iteration));
-                }
-            } else {
-                if (iteration != 0) {
-                    digitLeft = false;
-                }
-            }
-            iteration++;
-        }
-        return digitsToAdd;
     }
 
     private void removeFromNumbersMap(int lineNumber, TreeMap<Integer, Integer> indexesToRemoveFromNumbers) {
@@ -134,7 +120,7 @@ public class CalculateMissingParts {
     }
 
     private void addNumsFromSameLine(int lineNumber, int index) {
-        TreeMap<Integer, Integer> digitsToAdd = getListOfConsecutiveDigitsToAdd(lineNumber, (index + 1));
+        TreeMap<Integer, Integer> digitsToAdd = numbers.getListOfConsecutiveDigitsToAdd(lineNumber, (index + 1));
         addListOfConsecutiveDigits(digitsToAdd);
     }
 
