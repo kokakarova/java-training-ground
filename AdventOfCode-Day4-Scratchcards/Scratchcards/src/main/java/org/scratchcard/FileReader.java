@@ -13,14 +13,10 @@ public interface FileReader {
         try (InputStream file = Winnings.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-            int i = 1;
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-                System.out.println("Line: " + i);
-                System.out.println("s = " + s);
                 if (className.equals("winnings")) {
                     winnings.processLine(s);
                 }
-                i++;
             }
         } catch (IOException e) {
             e.printStackTrace();
