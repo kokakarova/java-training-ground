@@ -9,19 +9,17 @@ public interface FileReader {
 
     Winnings winnings = new Winnings();
 
-    default void readFromFile(String fileName, String className) throws IOException {
+    default void readFromFile(String fileName) {
         try (InputStream file = Winnings.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+            int i = 1;
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-                if (className.equals("winnings")) {
-                    winnings.processLine(s);
-                }
+                winnings.processLine(s, i);
+                i++;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    void readFromFile(String fileName) throws IOException;
 }
