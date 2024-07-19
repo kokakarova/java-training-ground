@@ -40,7 +40,6 @@ public class BrokenGears {
 
     public void processLine(String stringLine, int lineNumber) {
         char[] lineToCharsArray = stringLine.toCharArray();
-        System.out.println("line -------------- : " + lineNumber);
         for (int i = lineToCharsArray.length - 1; i >= 0; i--) {
             if (lineToCharsArray[i] == GEAR_SYMBOL) {
                 handleGearSymbol(lineNumber, i);
@@ -49,7 +48,7 @@ public class BrokenGears {
             }
             if (Character.isDigit(lineToCharsArray[i])) {
                 handleDigits(lineNumber, i, lineToCharsArray[i]);
-                if (i == 0) {
+                if (i == 0 && matchFound) {
                     addGearSymbolToMap(tempLineNmber, tempGearMatchIndex, List.of(tempNumber));
                     resetControlVariables();
                 }
@@ -191,19 +190,17 @@ public class BrokenGears {
     }
 
     public void calculateTotalSum() {
-        System.out.println("gearSymbols = " + gearSymbols);
         for (var entry : gearSymbols.values()) {
-            System.out.println("entry = " + entry);
-            var toList = entry.values().stream().flatMap(Collection::parallelStream).toList();
-            System.out.println("toList = " + toList);
-            int multiplicationResult = 1;
-            if (toList.size() == 2) {
-                for (int i : toList) {
-                    multiplicationResult *= i;
+            for (var inner : entry.values()) {
+                int multiplicationResult = 1;
+                if (inner.size() == 2) {
+                    for (int i : inner) {
+                        multiplicationResult *= i;
+                    }
+                    setTotalSum((getTotalSum() + multiplicationResult));
                 }
-                setTotalSum((getTotalSum() + multiplicationResult));
             }
-            System.out.println("in calculateTotalSum(): " + getTotalSum());
         }
+        System.out.println("Part-2, Final Sum: " + getTotalSum());
     }
 }

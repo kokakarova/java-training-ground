@@ -35,8 +35,6 @@ public class CalculateMissingParts {
 
     public void processLine(String stringLine, int lineNumber) {
         char[] lineToCharsArray = stringLine.toCharArray();
-        System.out.println("line -------------- : " + lineNumber);
-        System.out.println("current sum: " + totalSum);
         for (int i = lineToCharsArray.length - 1; i >= 0; i--) {
             if (lineToCharsArray[i] == '.') {
                 handleDot();
