@@ -8,7 +8,7 @@ public class GearRatios {
         BrokenGears brokenGears = new BrokenGears();
         try {
 //            missingParts.readFromFile("puzzleFile.txt");
-            brokenGears.readFromFile("puzzlePart2Simple.txt");
+            brokenGears.readFromFile("puzzleFile.txt");
 //            System.out.println("missingParts.getTotalSum() = " + missingParts.getTotalSum());
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());

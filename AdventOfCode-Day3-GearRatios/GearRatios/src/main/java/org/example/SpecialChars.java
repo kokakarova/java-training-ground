@@ -12,6 +12,7 @@ public class SpecialChars {
     private HashMap<Integer, List<Integer>> specialChars = new HashMap<>();
     // constant step - one place/line before or after the index
     private final int STEP = 1;
+    private final char GEAR_SYMBOL = '*';
 
     public boolean isNextToSpecialChar(int lineNumber, int index) {
         boolean charInPrevLine = false;
