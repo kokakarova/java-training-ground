@@ -1,4 +1,4 @@
-package org.seeds;
+package org.seeds.Maps;
 
 import lombok.Data;
 

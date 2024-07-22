@@ -7,11 +7,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Data
 public class Garden {
 
     Seed seed = new Seed();
+    List<String[]> tempList = new ArrayList<>();
+    boolean addToMultiDimArray = false;
     SeedToSoil seedToSoil = new SeedToSoil();
     SoilToFertilizer soilToFertilizer = new SoilToFertilizer();
     FertilizerToWater fertilizerToWater = new FertilizerToWater();
@@ -38,51 +43,117 @@ public class Garden {
     private void processLine(String stringLine) {
         if (stringLine.substring(0, 1).matches("^[a-zA-Z]")) {
             checkTitleLines(stringLine);
+            return;
         } else {
             System.out.println("Doesn't start with a letter: " + stringLine);
+            saveMapToTempList(stringLine);
         }
-
-
     }
 
     private void checkTitleLines(String stringLine) {
-        if (stringLine.startsWith("seeds")) {
-            seed.handleSeedsNumbers(stringLine.split(":")[1]);
-            System.out.println("seedsNumbers = " + seed.getSeedsNumbers());
+        String[] splitLine = stringLine.split(":");
+        System.out.println("Arrays.toString(splitLine) = " + Arrays.toString(splitLine));
+        switch (splitLine[0]) {
+            case "seed":
+                seed.handleSeedsNumbers(splitLine[1]);
+                System.out.println("seedsNumbers = " + seed.getSeedsNumbers());
+                break;
+            case "seed-to-soil map":
+                seedToSoil.setActive(true);
+                break;
+            case "soil-to-fertilizer map":
+                seedToSoil.setActive(false);
+                soilToFertilizer.setActive(true);
+                addToMultiDimArray = true;
+                break;
+            case "fertilizer-to-water map":
+                soilToFertilizer.setActive(false);
+                fertilizerToWater.setActive(true);
+                addToMultiDimArray = true;
+                break;
+            case "water-to-light map":
+                fertilizerToWater.setActive(false);
+                waterToLight.setActive(true);
+                addToMultiDimArray = true;
+                break;
+            case "light-to-temperature map":
+                waterToLight.setActive(false);
+                lightToTemp.setActive(true);
+                addToMultiDimArray = true;
+                break;
+            case "temperature-to-humidity map":
+                lightToTemp.setActive(false);
+                tempToHumidity.setActive(true);
+                addToMultiDimArray = true;
+                break;
+            default:
+                tempToHumidity.setActive(false);
+                humidityToLocation.setActive(true);
+                addToMultiDimArray = true;
+        }
+    }
+
+    private void saveMapToTempList(String stringLine) {
+        String[] splitLine = stringLine.split(" ");
+        if (seedToSoil.isActive()) {
+            tempList.add(splitLine);
             return;
         }
-        if (stringLine.startsWith("seed-to")) {
-            seedToSoil.setActive(true);
+        if (soilToFertilizer.isActive()) {
+            if (addToMultiDimArray) {
+                seedToSoil.setSeedToSoilMap(tempList);
+                tempList.clear();
+                addToMultiDimArray = false;
+            }
+            tempList.add(splitLine);
             return;
         }
-        if (stringLine.startsWith("soil-to")) {
-            seedToSoil.setActive(false);
-            soilToFertilizer.setActive(true);
+        if (fertilizerToWater.isActive()) {
+            if (addToMultiDimArray) {
+                soilToFertilizer.setSoilToFertilizerMap(tempList);
+                tempList.clear();
+                addToMultiDimArray = false;
+            }
+            tempList.add(splitLine);
             return;
         }
-        if (stringLine.startsWith("fertilizer-to")) {
-            soilToFertilizer.setActive(false);
-            fertilizerToWater.setActive(true);
+        if (waterToLight.isActive()) {
+            if (addToMultiDimArray) {
+                fertilizerToWater.setFertilizerToWaterMap(tempList);
+                tempList.clear();
+                addToMultiDimArray = false;
+            }
+            tempList.add(splitLine);
             return;
         }
-        if (stringLine.startsWith("water-to")) {
-            fertilizerToWater.setActive(false);
-            waterToLight.setActive(true);
+        if (lightToTemp.isActive()) {
+            if (addToMultiDimArray) {
+                waterToLight.setWaterToLightMap(tempList);
+                tempList.clear();
+                addToMultiDimArray = false;
+            }
+            tempList.add(splitLine);
             return;
         }
-        if (stringLine.startsWith("light-to")) {
-            waterToLight.setActive(false);
-            lightToTemp.setActive(true);
+        if (tempToHumidity.isActive()) {
+            if (addToMultiDimArray) {
+                lightToTemp.setLightToTempMap(tempList);
+                tempList.clear();
+                addToMultiDimArray = false;
+            }
+            tempList.add(splitLine);
             return;
         }
-        if (stringLine.startsWith("temperature-to")) {
-            lightToTemp.setActive(false);
-            tempToHumidity.setActive(true);
-            return;
-        }
-        if (stringLine.startsWith("humidity-to")) {
-            tempToHumidity.setActive(false);
-            humidityToLocation.setActive(true);
+        if (humidityToLocation.isActive()) {
+            if (addToMultiDimArray) {
+                tempToHumidity.setTempToHumidityMap(tempList);
+                tempList.clear();
+                addToMultiDimArray = false;
+            }
+            tempList.add(splitLine);
+            if (tempList.size() == 2) {
+                humidityToLocation.setHumidityToLocationMap(tempList);
+            }
         }
     }
 }
