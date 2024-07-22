@@ -14,8 +14,16 @@ public class HumidityToLocation {
         for (int i = 0; i < humidityToLocationMapList.size(); i++) {
             for (int j = 0; j < humidityToLocationMapList.get(i).length; j++) {
                 humidityToLocationMap[i][j] = Long.parseLong(humidityToLocationMapList.get(i)[j]);
-                System.out.println("humidityToLocationMap[" + i + "][" + j +"] = " + humidityToLocationMap[i][j]);
             }
         }
+    }
+
+    public long getLocationPlacement(long humidityPlace) {
+        for (var line : humidityToLocationMap) {
+            if (humidityPlace >= line[1] && humidityPlace < line[1] + line[2]) {
+                return line[0] + (humidityPlace - line[1]);
+            }
+        }
+        return humidityPlace;
     }
 }

@@ -14,8 +14,16 @@ public class LightToTemperature {
         for (int i = 0; i < lightToTempMapList.size(); i++) {
             for (int j = 0; j < lightToTempMapList.get(i).length; j++) {
                 lightToTemperatureMap[i][j] = Long.parseLong(lightToTempMapList.get(i)[j]);
-                System.out.println("lightToTemperatureMap[" + i + "][" + j +"] = " + lightToTemperatureMap[i][j]);
             }
         }
+    }
+
+    public long getTemperaturePlacement(long lightPlace) {
+        for (var line : lightToTemperatureMap) {
+            if (lightPlace >= line[1] && lightPlace < line[1] + line[2]) {
+                return line[0] + (lightPlace - line[1]);
+            }
+        }
+        return lightPlace;
     }
 }

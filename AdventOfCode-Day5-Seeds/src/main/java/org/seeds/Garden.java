@@ -9,12 +9,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Data
 public class Garden {
 
-    Seed seed = new Seed();
+    Seed seeds = new Seed();
     List<String[]> tempList = new ArrayList<>();
     boolean addToMultiDimArray = false;
     SeedToSoil seedToSoil = new SeedToSoil();
@@ -25,7 +26,7 @@ public class Garden {
     TemperatureToHumidity tempToHumidity = new TemperatureToHumidity();
     HumidityToLocation humidityToLocation = new HumidityToLocation();
 
-    public void readFromFile(String fileName) {
+    public long readFromFile(String fileName) {
         try (InputStream file = Garden.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -35,9 +36,21 @@ public class Garden {
                 }
                 processLine(s);
             }
+            System.out.println("seeds-to-soil: " + Arrays.deepToString(seedToSoil.getSeedToSoilMap()));
+//            System.out.println("soil-to-fertilizer: " + Arrays.deepToString(soilToFertilizer.getSoilToFertilizerMap()));
+//            System.out.println("fertilizer-to-water: " + Arrays.deepToString(fertilizerToWater.getFertilizerToWaterMap()));
+//            System.out.println("water-to-light: " + Arrays.deepToString(waterToLight.getWaterToLightMap()));
+//            System.out.println("light-to-temp: " + Arrays.deepToString(lightToTemp.getLightToTemperatureMap()));
+//            System.out.println("temp-to-humidity: " + Arrays.deepToString(tempToHumidity.getTemperatureToHumidityMap()));
+//            System.out.println("humidity-to-location: " + Arrays.deepToString(getTempToHumidity().getTemperatureToHumidityMap()));
+            System.out.println("--------------------------------");
+            long meh = 1797371961L + 494535345L;
+            System.out.println("1797371961 + 494535345 = " + meh);
+           return getLocationForAllSeeds();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     private void processLine(String stringLine) {
@@ -45,18 +58,15 @@ public class Garden {
             checkTitleLines(stringLine);
             return;
         } else {
-            System.out.println("Doesn't start with a letter: " + stringLine);
             saveMapToTempList(stringLine);
         }
     }
 
     private void checkTitleLines(String stringLine) {
         String[] splitLine = stringLine.split(":");
-        System.out.println("Arrays.toString(splitLine) = " + Arrays.toString(splitLine));
         switch (splitLine[0]) {
-            case "seed":
-                seed.handleSeedsNumbers(splitLine[1]);
-                System.out.println("seedsNumbers = " + seed.getSeedsNumbers());
+            case "seeds":
+                seeds.handleSeedsNumbers(splitLine[1]);
                 break;
             case "seed-to-soil map":
                 seedToSoil.setActive(true);
@@ -155,5 +165,23 @@ public class Garden {
                 humidityToLocation.setHumidityToLocationMap(tempList);
             }
         }
+    }
+    public long getLocationForAllSeeds() {
+        for (Long seed : seeds.getSeedsNumbers().keySet()) {
+            long location = getLocation(seed);
+            seeds.getSeedsNumbers().put(seed, location);
+        }
+//        System.out.println("seeds.getSeedsNumbers() = " + seeds.getSeedsNumbers());
+       return Collections.min(seeds.getSeedsNumbers().values());
+    }
+
+    private long getLocation(Long seed) {
+        long soilPlace = seedToSoil.getSoilPlacement(seed);
+        long fertilizerPlace = soilToFertilizer.getFertilizerPlacement(soilPlace);
+        long waterPlace = fertilizerToWater.getWaterPlacement(fertilizerPlace);
+        long lightPlace = waterToLight.getLightPlacement(waterPlace);
+        long temperaturePlace = lightToTemp.getTemperaturePlacement(lightPlace);
+        long humidityPlace = tempToHumidity.getHumidityPlacement(temperaturePlace);
+        return humidityToLocation.getLocationPlacement(humidityPlace);
     }
 }

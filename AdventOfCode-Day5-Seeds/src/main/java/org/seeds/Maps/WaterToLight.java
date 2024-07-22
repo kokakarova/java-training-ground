@@ -14,8 +14,16 @@ public class WaterToLight {
         for (int i = 0; i < waterToLightMapList.size(); i++) {
             for (int j = 0; j < waterToLightMapList.get(i).length; j++) {
                 waterToLightMap[i][j] = Long.parseLong(waterToLightMapList.get(i)[j]);
-                System.out.println("waterToLightMap[" + i + "][" + j +"] = " + waterToLightMap[i][j]);
             }
         }
+    }
+
+    public long getLightPlacement(long waterPlace) {
+        for (var line : waterToLightMap) {
+            if (waterPlace >= line[1] && waterPlace < line[1] + line[2]) {
+                return line[0] + (waterPlace - line[1]);
+            }
+        }
+        return waterPlace;
     }
 }

@@ -14,8 +14,16 @@ public class FertilizerToWater {
         for (int i = 0; i < fertilizerToWaterMapList.size(); i++) {
             for (int j = 0; j < fertilizerToWaterMapList.get(i).length; j++) {
                 fertilizerToWaterMap[i][j] = Long.parseLong(fertilizerToWaterMapList.get(i)[j]);
-                System.out.println("fertilizerToWaterMap[" + i + "][" + j +"] = " + fertilizerToWaterMap[i][j]);
             }
         }
+    }
+
+    public long getWaterPlacement(long fertilizerPlace) {
+        for (var line : fertilizerToWaterMap) {
+            if (fertilizerPlace >= line[1] && fertilizerPlace < line[1] + line[2]) {
+                return line[0] + (fertilizerPlace - line[1]);
+            }
+        }
+        return fertilizerPlace;
     }
 }
