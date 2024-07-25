@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -36,6 +35,7 @@ public class Garden {
     List<MapEntry> lightToTemp = new ArrayList<>();
     List<MapEntry> tempToHumidity = new ArrayList<>();
     List<MapEntry> humidityToLocation = new ArrayList<>();
+    Stage currentStage;
 
     // DELETE MYB
     Seed seedsCls = new Seed();
@@ -122,7 +122,6 @@ public class Garden {
     private void processLine(String stringLine) {
         if (stringLine.substring(0, 1).matches("^[a-zA-Z]")) {
             checkTitleLines(stringLine);
-            return;
         } else {
             saveMapToTempList(stringLine);
         }
@@ -132,41 +131,28 @@ public class Garden {
         String[] splitLine = stringLine.split(":");
         switch (splitLine[0]) {
             case "seeds":
-                seedsCls.handleSeedsNumbers(splitLine[1]);
                 handleSeeds(splitLine[1]);
                 break;
             case "seed-to-soil map":
-                seedToSoilCls.setActive(true);
+                setCurrentStage(Stage.SEED_TO_SOIL);
                 break;
             case "soil-to-fertilizer map":
-                seedToSoilCls.setActive(false);
-                soilToFertilizerCls.setActive(true);
-                addToMultiDimArray = true;
+                setCurrentStage(Stage.SOIL_TO_FERTILIZER);
                 break;
             case "fertilizer-to-water map":
-                soilToFertilizerCls.setActive(false);
-                fertilizerToWaterCls.setActive(true);
-                addToMultiDimArray = true;
+                setCurrentStage(Stage.FERTILIZER_TO_WATER);
                 break;
             case "water-to-light map":
-                fertilizerToWaterCls.setActive(false);
-                waterToLightCls.setActive(true);
-                addToMultiDimArray = true;
+                setCurrentStage(Stage.WATER_TO_LIGHT);
                 break;
             case "light-to-temperature map":
-                waterToLightCls.setActive(false);
-                lightToTempCls.setActive(true);
-                addToMultiDimArray = true;
+                setCurrentStage(Stage.LIGHT_TO_TEMPERATURE);
                 break;
             case "temperature-to-humidity map":
-                lightToTempCls.setActive(false);
-                tempToHumidityCls.setActive(true);
-                addToMultiDimArray = true;
+                setCurrentStage(Stage.TEMPERATURE_TO_HUMIDITY);
                 break;
             default:
-                tempToHumidityCls.setActive(false);
-                humidityToLocationCls.setActive(true);
-                addToMultiDimArray = true;
+                setCurrentStage(Stage.HUMIDITY_TO_LOCATION);
         }
     }
 
@@ -178,49 +164,44 @@ public class Garden {
 
     private void saveMapToTempList(String stringLine) {
         String[] splitLine = stringLine.split(" ");
-        if (seedToSoilCls.isActive()) {
-            seedToSoil.add(new MapEntry(
-                    Long.parseLong(splitLine[0]),
-                    Long.parseLong(splitLine[1]),
-                    Long.parseLong(splitLine[2])));
-            return;
-        }
-        if (soilToFertilizerCls.isActive()) {
-            soilToFertilizer.add(new MapEntry(
-                    Long.parseLong(splitLine[0]),
-                    Long.parseLong(splitLine[1]),
-                    Long.parseLong(splitLine[2])));
-            return;
-        }
-        if (fertilizerToWaterCls.isActive()) {
-            fertilizerToWater.add(new MapEntry(
-                    Long.parseLong(splitLine[0]),
-                    Long.parseLong(splitLine[1]),
-                    Long.parseLong(splitLine[2])));
-            return;
-        }
-        if (waterToLightCls.isActive()) {
-            waterToLight.add(new MapEntry(
-                    Long.parseLong(splitLine[0]),
-                    Long.parseLong(splitLine[1]),
-                    Long.parseLong(splitLine[2])));
-            return;
-        }
-        if (lightToTempCls.isActive()) {
+        switch (currentStage) {
+            case SEED_TO_SOIL:
+                seedToSoil.add(new MapEntry(
+                        Long.parseLong(splitLine[0]),
+                        Long.parseLong(splitLine[1]),
+                        Long.parseLong(splitLine[2])));
+                break;
+            case SOIL_TO_FERTILIZER:
+                soilToFertilizer.add(new MapEntry(
+                        Long.parseLong(splitLine[0]),
+                        Long.parseLong(splitLine[1]),
+                        Long.parseLong(splitLine[2])));
+                break;
+            case FERTILIZER_TO_WATER:
+                fertilizerToWater.add(new MapEntry(
+                        Long.parseLong(splitLine[0]),
+                        Long.parseLong(splitLine[1]),
+                        Long.parseLong(splitLine[2])));
+                break;
+            case WATER_TO_LIGHT:
+                waterToLight.add(new MapEntry(
+                        Long.parseLong(splitLine[0]),
+                        Long.parseLong(splitLine[1]),
+                        Long.parseLong(splitLine[2])));
+                break;
+            case LIGHT_TO_TEMPERATURE:
             lightToTemp.add(new MapEntry(
                     Long.parseLong(splitLine[0]),
                     Long.parseLong(splitLine[1]),
                     Long.parseLong(splitLine[2])));
-            return;
-        }
-        if (tempToHumidityCls.isActive()) {
+            break;
+            case TEMPERATURE_TO_HUMIDITY:
             tempToHumidity.add(new MapEntry(
                     Long.parseLong(splitLine[0]),
                     Long.parseLong(splitLine[1]),
                     Long.parseLong(splitLine[2])));
-            return;
-        }
-        if (humidityToLocationCls.isActive()) {
+            break;
+            default:
             humidityToLocation.add(new MapEntry(
                     Long.parseLong(splitLine[0]),
                     Long.parseLong(splitLine[1]),

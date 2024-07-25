@@ -1,0 +1,11 @@
+package org.seeds;
+
+public enum Stage {
+    SEED_TO_SOIL,
+    SOIL_TO_FERTILIZER,
+    FERTILIZER_TO_WATER,
+    WATER_TO_LIGHT,
+    LIGHT_TO_TEMPERATURE,
+    TEMPERATURE_TO_HUMIDITY,
+    HUMIDITY_TO_LOCATION
+}
