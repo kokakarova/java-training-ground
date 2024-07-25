@@ -8,22 +8,47 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Data
 public class Garden {
 
-    Seed seeds = new Seed();
+    static class MapEntry {
+        long destination;
+        long source;
+        long length;
+
+        MapEntry(long destStart, long srcStart, long length) {
+            this.destination = destStart;
+            this.source = srcStart;
+            this.length = length;
+        }
+    }
+
+    List<Long> seeds = new ArrayList<>();
+    List<MapEntry> seedToSoil = new ArrayList<>();
+    List<MapEntry> soilToFertilizer = new ArrayList<>();
+    List<MapEntry> fertilizerToWater = new ArrayList<>();
+    List<MapEntry> waterToLight = new ArrayList<>();
+    List<MapEntry> lightToTemp = new ArrayList<>();
+    List<MapEntry> tempToHumidity = new ArrayList<>();
+    List<MapEntry> humidityToLocation = new ArrayList<>();
+
+    // DELETE MYB
+    Seed seedsCls = new Seed();
     List<String[]> tempList = new ArrayList<>();
     boolean addToMultiDimArray = false;
-    SeedToSoil seedToSoil = new SeedToSoil();
-    SoilToFertilizer soilToFertilizer = new SoilToFertilizer();
-    FertilizerToWater fertilizerToWater = new FertilizerToWater();
-    WaterToLight waterToLight = new WaterToLight();
-    LightToTemperature lightToTemp = new LightToTemperature();
-    TemperatureToHumidity tempToHumidity = new TemperatureToHumidity();
-    HumidityToLocation humidityToLocation = new HumidityToLocation();
+    SeedToSoil seedToSoilCls = new SeedToSoil();
+    SoilToFertilizer soilToFertilizerCls = new SoilToFertilizer();
+    FertilizerToWater fertilizerToWaterCls = new FertilizerToWater();
+    WaterToLight waterToLightCls = new WaterToLight();
+    LightToTemperature lightToTempCls = new LightToTemperature();
+    TemperatureToHumidity tempToHumidityCls = new TemperatureToHumidity();
+    HumidityToLocation humidityToLocationCls = new HumidityToLocation();
+    // DELETE MYB - to here
 
     public long readFromFile(String fileName) {
         try (InputStream file = Garden.class.getClassLoader().getResourceAsStream(fileName)) {
@@ -35,11 +60,63 @@ public class Garden {
                 }
                 processLine(s);
             }
-           return getLocationForAllSeeds();
+            return getFinalLocation();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    private long getFinalLocation() {
+        long[] locations = new long[seeds.size()];
+
+        // Convert seeds to soil
+        for (int i = 0; i < seeds.size(); i++) {
+            locations[i] = convertStage(seeds.get(i), seedToSoil);
+        }
+
+        // Convert soil to fertilizer
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], soilToFertilizer);
+        }
+
+        // Convert fertilizer to water
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], fertilizerToWater);
+        }
+
+        // Convert water to light
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], waterToLight);
+        }
+
+        // Convert light to temperature
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], lightToTemp);
+        }
+
+        // Convert temperature to humidity
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], tempToHumidity);
+        }
+
+        // Convert humidity to location
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], humidityToLocation);
+        }
+
+        // Find the lowest location number
+        return Arrays.stream(locations).min().orElseThrow();
+    }
+
+    private long convertStage(Long value, List<MapEntry> map) {
+        for (MapEntry entry : map) {
+            if (value >= entry.source && value < entry.source + entry.length) {
+                return entry.destination + (value - entry.source);
+            }
+        }
+        // Return a default value if no match is found (this depends on your requirements)
+        return value;
     }
 
     private void processLine(String stringLine) {
@@ -55,121 +132,99 @@ public class Garden {
         String[] splitLine = stringLine.split(":");
         switch (splitLine[0]) {
             case "seeds":
-                seeds.handleSeedsNumbers(splitLine[1]);
+                seedsCls.handleSeedsNumbers(splitLine[1]);
+                handleSeeds(splitLine[1]);
                 break;
             case "seed-to-soil map":
-                seedToSoil.setActive(true);
+                seedToSoilCls.setActive(true);
                 break;
             case "soil-to-fertilizer map":
-                seedToSoil.setActive(false);
-                soilToFertilizer.setActive(true);
+                seedToSoilCls.setActive(false);
+                soilToFertilizerCls.setActive(true);
                 addToMultiDimArray = true;
                 break;
             case "fertilizer-to-water map":
-                soilToFertilizer.setActive(false);
-                fertilizerToWater.setActive(true);
+                soilToFertilizerCls.setActive(false);
+                fertilizerToWaterCls.setActive(true);
                 addToMultiDimArray = true;
                 break;
             case "water-to-light map":
-                fertilizerToWater.setActive(false);
-                waterToLight.setActive(true);
+                fertilizerToWaterCls.setActive(false);
+                waterToLightCls.setActive(true);
                 addToMultiDimArray = true;
                 break;
             case "light-to-temperature map":
-                waterToLight.setActive(false);
-                lightToTemp.setActive(true);
+                waterToLightCls.setActive(false);
+                lightToTempCls.setActive(true);
                 addToMultiDimArray = true;
                 break;
             case "temperature-to-humidity map":
-                lightToTemp.setActive(false);
-                tempToHumidity.setActive(true);
+                lightToTempCls.setActive(false);
+                tempToHumidityCls.setActive(true);
                 addToMultiDimArray = true;
                 break;
             default:
-                tempToHumidity.setActive(false);
-                humidityToLocation.setActive(true);
+                tempToHumidityCls.setActive(false);
+                humidityToLocationCls.setActive(true);
                 addToMultiDimArray = true;
         }
+    }
+
+    private void handleSeeds(String s) {
+        String[] seedNumbersString = s.trim().split(" ");
+        List<Long> listOfSeeds = Stream.of(seedNumbersString).map(Long::parseLong).toList();
+        seeds.addAll(listOfSeeds);
     }
 
     private void saveMapToTempList(String stringLine) {
         String[] splitLine = stringLine.split(" ");
-        if (seedToSoil.isActive()) {
-            tempList.add(splitLine);
+        if (seedToSoilCls.isActive()) {
+            seedToSoil.add(new MapEntry(
+                    Long.parseLong(splitLine[0]),
+                    Long.parseLong(splitLine[1]),
+                    Long.parseLong(splitLine[2])));
             return;
         }
-        if (soilToFertilizer.isActive()) {
-            if (addToMultiDimArray) {
-                seedToSoil.setSeedToSoilMap(tempList);
-                tempList.clear();
-                addToMultiDimArray = false;
-            }
-            tempList.add(splitLine);
+        if (soilToFertilizerCls.isActive()) {
+            soilToFertilizer.add(new MapEntry(
+                    Long.parseLong(splitLine[0]),
+                    Long.parseLong(splitLine[1]),
+                    Long.parseLong(splitLine[2])));
             return;
         }
-        if (fertilizerToWater.isActive()) {
-            if (addToMultiDimArray) {
-                soilToFertilizer.setSoilToFertilizerMap(tempList);
-                tempList.clear();
-                addToMultiDimArray = false;
-            }
-            tempList.add(splitLine);
+        if (fertilizerToWaterCls.isActive()) {
+            fertilizerToWater.add(new MapEntry(
+                    Long.parseLong(splitLine[0]),
+                    Long.parseLong(splitLine[1]),
+                    Long.parseLong(splitLine[2])));
             return;
         }
-        if (waterToLight.isActive()) {
-            if (addToMultiDimArray) {
-                fertilizerToWater.setFertilizerToWaterMap(tempList);
-                tempList.clear();
-                addToMultiDimArray = false;
-            }
-            tempList.add(splitLine);
+        if (waterToLightCls.isActive()) {
+            waterToLight.add(new MapEntry(
+                    Long.parseLong(splitLine[0]),
+                    Long.parseLong(splitLine[1]),
+                    Long.parseLong(splitLine[2])));
             return;
         }
-        if (lightToTemp.isActive()) {
-            if (addToMultiDimArray) {
-                waterToLight.setWaterToLightMap(tempList);
-                tempList.clear();
-                addToMultiDimArray = false;
-            }
-            tempList.add(splitLine);
+        if (lightToTempCls.isActive()) {
+            lightToTemp.add(new MapEntry(
+                    Long.parseLong(splitLine[0]),
+                    Long.parseLong(splitLine[1]),
+                    Long.parseLong(splitLine[2])));
             return;
         }
-        if (tempToHumidity.isActive()) {
-            if (addToMultiDimArray) {
-                lightToTemp.setLightToTempMap(tempList);
-                tempList.clear();
-                addToMultiDimArray = false;
-            }
-            tempList.add(splitLine);
+        if (tempToHumidityCls.isActive()) {
+            tempToHumidity.add(new MapEntry(
+                    Long.parseLong(splitLine[0]),
+                    Long.parseLong(splitLine[1]),
+                    Long.parseLong(splitLine[2])));
             return;
         }
-        if (humidityToLocation.isActive()) {
-            if (addToMultiDimArray) {
-                tempToHumidity.setTempToHumidityMap(tempList);
-                tempList.clear();
-                addToMultiDimArray = false;
-            }
-            tempList.add(splitLine);
-            if (tempList.size() == 2) {
-                humidityToLocation.setHumidityToLocationMap(tempList);
-            }
+        if (humidityToLocationCls.isActive()) {
+            humidityToLocation.add(new MapEntry(
+                    Long.parseLong(splitLine[0]),
+                    Long.parseLong(splitLine[1]),
+                    Long.parseLong(splitLine[2])));
         }
-    }
-    public long getLocationForAllSeeds() {
-        for (Long seed : seeds.getSeedsNumbers().keySet()) {
-            long location = getLocation(seed);
-            seeds.getSeedsNumbers().put(seed, location);
-        }
-       return Collections.min(seeds.getSeedsNumbers().values());
-    }
-
-    private long getLocation(Long seed) {
-        long soilPlace = seedToSoil.getSoilPlacement(seed);
-        long fertilizerPlace = soilToFertilizer.getFertilizerPlacement(soilPlace);
-        long waterPlace = fertilizerToWater.getWaterPlacement(fertilizerPlace);
-        long lightPlace = waterToLight.getLightPlacement(waterPlace);
-        long temperaturePlace = lightToTemp.getTemperaturePlacement(lightPlace);
-        long humidityPlace = tempToHumidity.getHumidityPlacement(temperaturePlace);
-        return humidityToLocation.getLocationPlacement(humidityPlace);
     }
 }
