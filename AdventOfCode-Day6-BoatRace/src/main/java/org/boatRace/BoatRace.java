@@ -9,19 +9,19 @@ import java.util.List;
 @Data
 public class BoatRace {
 
-    List<Integer> timeAndWinScenarios = new ArrayList<>();
-    List<Integer> recordDistances = new ArrayList<>();
-    int[] winScenariosCount;
+    List<Long> timeAndWinScenarios = new ArrayList<>();
+    List<Long> recordDistances = new ArrayList<>();
+    long[] winScenariosCount;
 
-    public BoatRace(List<Integer> timeAndWinScenarios, List<Integer> recordDistances) {
+    public BoatRace(List<Long> timeAndWinScenarios, List<Long> recordDistances) {
         for (int i = 0; i < timeAndWinScenarios.size(); i++) {
             this.timeAndWinScenarios.add(timeAndWinScenarios.get(i));
             this.recordDistances.add(recordDistances.get(i));
         }
-        this.winScenariosCount = new int[timeAndWinScenarios.size()];
+        this.winScenariosCount = new long[timeAndWinScenarios.size()];
     }
 
-    public int getFinalResult() {
+    public long getFinalResult() {
         for (int i = 0; i < timeAndWinScenarios.size(); i++) {
             getCountForRace(i);
         }
@@ -29,10 +29,10 @@ public class BoatRace {
     }
 
     private void getCountForRace(int arrayIndex) {
-        int totalTime = timeAndWinScenarios.get(arrayIndex);
-        int distanceToBeat = recordDistances.get(arrayIndex);
+        long totalTime = timeAndWinScenarios.get(arrayIndex);
+        long distanceToBeat = recordDistances.get(arrayIndex);
         int holdTime = 1;
-        int travelTime = (totalTime - holdTime) * holdTime;
+        long travelTime = (totalTime - holdTime) * holdTime;
         int countOptions = 0;
         while (travelTime > distanceToBeat || holdTime <= travelTime) {
             if (travelTime > distanceToBeat) {
