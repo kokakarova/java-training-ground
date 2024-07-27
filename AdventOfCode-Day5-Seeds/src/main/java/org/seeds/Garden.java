@@ -1,7 +1,6 @@
 package org.seeds;
 
 import lombok.Data;
-import org.seeds.Maps.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,19 +36,6 @@ public class Garden {
     List<MapEntry> humidityToLocation = new ArrayList<>();
     Stage currentStage;
 
-    // DELETE MYB
-    Seed seedsCls = new Seed();
-    List<String[]> tempList = new ArrayList<>();
-    boolean addToMultiDimArray = false;
-    SeedToSoil seedToSoilCls = new SeedToSoil();
-    SoilToFertilizer soilToFertilizerCls = new SoilToFertilizer();
-    FertilizerToWater fertilizerToWaterCls = new FertilizerToWater();
-    WaterToLight waterToLightCls = new WaterToLight();
-    LightToTemperature lightToTempCls = new LightToTemperature();
-    TemperatureToHumidity tempToHumidityCls = new TemperatureToHumidity();
-    HumidityToLocation humidityToLocationCls = new HumidityToLocation();
-    // DELETE MYB - to here
-
     public long readFromFile(String fileName) {
         try (InputStream file = Garden.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
@@ -65,58 +51,6 @@ public class Garden {
             e.printStackTrace();
         }
         return 0;
-    }
-
-    private long getFinalLocation() {
-        long[] locations = new long[seeds.size()];
-
-        // Convert seeds to soil
-        for (int i = 0; i < seeds.size(); i++) {
-            locations[i] = convertStage(seeds.get(i), seedToSoil);
-        }
-
-        // Convert soil to fertilizer
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], soilToFertilizer);
-        }
-
-        // Convert fertilizer to water
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], fertilizerToWater);
-        }
-
-        // Convert water to light
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], waterToLight);
-        }
-
-        // Convert light to temperature
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], lightToTemp);
-        }
-
-        // Convert temperature to humidity
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], tempToHumidity);
-        }
-
-        // Convert humidity to location
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], humidityToLocation);
-        }
-
-        // Find the lowest location number
-        return Arrays.stream(locations).min().orElseThrow();
-    }
-
-    private long convertStage(Long value, List<MapEntry> map) {
-        for (MapEntry entry : map) {
-            if (value >= entry.source && value < entry.source + entry.length) {
-                return entry.destination + (value - entry.source);
-            }
-        }
-        // Return a default value if no match is found (this depends on your requirements)
-        return value;
     }
 
     private void processLine(String stringLine) {
@@ -207,5 +141,57 @@ public class Garden {
                     Long.parseLong(splitLine[1]),
                     Long.parseLong(splitLine[2])));
         }
+    }
+
+    private long getFinalLocation() {
+        long[] locations = new long[seeds.size()];
+
+        // Convert seeds to soil
+        for (int i = 0; i < seeds.size(); i++) {
+            locations[i] = convertStage(seeds.get(i), seedToSoil);
+        }
+
+        // Convert soil to fertilizer
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], soilToFertilizer);
+        }
+
+        // Convert fertilizer to water
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], fertilizerToWater);
+        }
+
+        // Convert water to light
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], waterToLight);
+        }
+
+        // Convert light to temperature
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], lightToTemp);
+        }
+
+        // Convert temperature to humidity
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], tempToHumidity);
+        }
+
+        // Convert humidity to location
+        for (int i = 0; i < locations.length; i++) {
+            locations[i] = convertStage(locations[i], humidityToLocation);
+        }
+
+        // Find the lowest location number
+        return Arrays.stream(locations).min().orElseThrow();
+    }
+
+    private long convertStage(Long value, List<MapEntry> map) {
+        for (MapEntry entry : map) {
+            if (value >= entry.source && value < entry.source + entry.length) {
+                return entry.destination + (value - entry.source);
+            }
+        }
+        // Return a default value if no match is found (this depends on your requirements)
+        return value;
     }
 }
