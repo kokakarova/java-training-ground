@@ -45,7 +45,7 @@ public class Garden {
                 if (s.isEmpty()) {
                     continue;
                 }
-                processLine(s, part);
+                processLine(s);
             }
             return getFinalLocation(part);
         } catch (IOException e) {
@@ -54,23 +54,19 @@ public class Garden {
         return 0;
     }
 
-    private void processLine(String stringLine, Part part) {
+    private void processLine(String stringLine) {
         if (stringLine.substring(0, 1).matches("^[a-zA-Z]")) {
-            checkTitleLines(stringLine, part);
+            checkTitleLines(stringLine);
         } else {
             saveMapToTempList(stringLine);
         }
     }
 
-    private void checkTitleLines(String stringLine, Part part) {
+    private void checkTitleLines(String stringLine) {
         String[] splitLine = stringLine.split(":");
         switch (splitLine[0]) {
             case "seeds":
-                if (part.equals(Part.PART_1)) {
-                    handleSeedsPart1(splitLine[1]);
-                } else {
-                    handleSeedsPart2(splitLine[1]);
-                }
+                handleSeeds(splitLine[1]);
                 break;
             case "seed-to-soil map":
                 setCurrentStage(Stage.SEED_TO_SOIL);
@@ -95,14 +91,10 @@ public class Garden {
         }
     }
 
-    private void handleSeedsPart1(String seedNumsString) {
+    private void handleSeeds(String seedNumsString) {
         String[] seedNumbersString = seedNumsString.trim().split(" ");
         List<Long> listOfSeeds = Stream.of(seedNumbersString).map(Long::parseLong).toList();
         seeds.addAll(listOfSeeds);
-    }
-
-    private void handleSeedsPart2(String seedNumsString) {
-
     }
 
     private void saveMapToTempList(String stringLine) {
@@ -153,19 +145,20 @@ public class Garden {
     }
 
     private long getFinalLocation(Part part) {
-        long keeper = Long.MAX_VALUE;
+        long finalLocation = Long.MAX_VALUE;
         if (part.equals(Part.PART_1)) {
             for (Long seed : seeds) {
-                keeper = Math.min(keeper, convertToLocation(seed));
+                finalLocation = Math.min(finalLocation, convertToLocation(seed));
             }
         } else {
-            for (int i = 0; i < seeds.size(); i += 2) {
+            for (int i = 0; i < seeds.size() - 1; i += 2) {
                 // here goes the logic for part 2
-                continue;
+                for (Long j = seeds.get(i); j < seeds.get(i) + seeds.get(i + 1); j++) {
+                    finalLocation = Math.min(finalLocation, convertToLocation(j));
+                }
             }
         }
-        return keeper;
-
+        return finalLocation;
     }
 
     private long convertToLocation(Long seed) {
