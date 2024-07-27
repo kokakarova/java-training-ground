@@ -1,4 +1,4 @@
-package org.seeds;
+package org.seeds.enums;
 
 public enum Stage {
     SEED_TO_SOIL,

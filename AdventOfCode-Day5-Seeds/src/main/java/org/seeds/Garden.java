@@ -1,13 +1,14 @@
 package org.seeds;
 
 import lombok.Data;
+import org.seeds.enums.Stage;
+import org.seeds.enums.Part;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -36,7 +37,7 @@ public class Garden {
     List<MapEntry> humidityToLocation = new ArrayList<>();
     Stage currentStage;
 
-    public long readFromFile(String fileName) {
+    public long readFromFile(String fileName, Part part) {
         try (InputStream file = Garden.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -44,28 +45,32 @@ public class Garden {
                 if (s.isEmpty()) {
                     continue;
                 }
-                processLine(s);
+                processLine(s, part);
             }
-            return getFinalLocation();
+            return getFinalLocation(part);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return 0;
     }
 
-    private void processLine(String stringLine) {
+    private void processLine(String stringLine, Part part) {
         if (stringLine.substring(0, 1).matches("^[a-zA-Z]")) {
-            checkTitleLines(stringLine);
+            checkTitleLines(stringLine, part);
         } else {
             saveMapToTempList(stringLine);
         }
     }
 
-    private void checkTitleLines(String stringLine) {
+    private void checkTitleLines(String stringLine, Part part) {
         String[] splitLine = stringLine.split(":");
         switch (splitLine[0]) {
             case "seeds":
-                handleSeeds(splitLine[1]);
+                if (part.equals(Part.PART_1)) {
+                    handleSeedsPart1(splitLine[1]);
+                } else {
+                    handleSeedsPart2(splitLine[1]);
+                }
                 break;
             case "seed-to-soil map":
                 setCurrentStage(Stage.SEED_TO_SOIL);
@@ -90,10 +95,14 @@ public class Garden {
         }
     }
 
-    private void handleSeeds(String s) {
-        String[] seedNumbersString = s.trim().split(" ");
+    private void handleSeedsPart1(String seedNumsString) {
+        String[] seedNumbersString = seedNumsString.trim().split(" ");
         List<Long> listOfSeeds = Stream.of(seedNumbersString).map(Long::parseLong).toList();
         seeds.addAll(listOfSeeds);
+    }
+
+    private void handleSeedsPart2(String seedNumsString) {
+
     }
 
     private void saveMapToTempList(String stringLine) {
@@ -124,65 +133,49 @@ public class Garden {
                         Long.parseLong(splitLine[2])));
                 break;
             case LIGHT_TO_TEMPERATURE:
-            lightToTemp.add(new MapEntry(
-                    Long.parseLong(splitLine[0]),
-                    Long.parseLong(splitLine[1]),
-                    Long.parseLong(splitLine[2])));
-            break;
+                lightToTemp.add(new MapEntry(
+                        Long.parseLong(splitLine[0]),
+                        Long.parseLong(splitLine[1]),
+                        Long.parseLong(splitLine[2])));
+                break;
             case TEMPERATURE_TO_HUMIDITY:
-            tempToHumidity.add(new MapEntry(
-                    Long.parseLong(splitLine[0]),
-                    Long.parseLong(splitLine[1]),
-                    Long.parseLong(splitLine[2])));
-            break;
+                tempToHumidity.add(new MapEntry(
+                        Long.parseLong(splitLine[0]),
+                        Long.parseLong(splitLine[1]),
+                        Long.parseLong(splitLine[2])));
+                break;
             default:
-            humidityToLocation.add(new MapEntry(
-                    Long.parseLong(splitLine[0]),
-                    Long.parseLong(splitLine[1]),
-                    Long.parseLong(splitLine[2])));
+                humidityToLocation.add(new MapEntry(
+                        Long.parseLong(splitLine[0]),
+                        Long.parseLong(splitLine[1]),
+                        Long.parseLong(splitLine[2])));
         }
     }
 
-    private long getFinalLocation() {
-        long[] locations = new long[seeds.size()];
-
-        // Convert seeds to soil
-        for (int i = 0; i < seeds.size(); i++) {
-            locations[i] = convertStage(seeds.get(i), seedToSoil);
+    private long getFinalLocation(Part part) {
+        long keeper = Long.MAX_VALUE;
+        if (part.equals(Part.PART_1)) {
+            for (Long seed : seeds) {
+                keeper = Math.min(keeper, convertToLocation(seed));
+            }
+        } else {
+            for (int i = 0; i < seeds.size(); i += 2) {
+                // here goes the logic for part 2
+                continue;
+            }
         }
+        return keeper;
 
-        // Convert soil to fertilizer
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], soilToFertilizer);
-        }
+    }
 
-        // Convert fertilizer to water
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], fertilizerToWater);
-        }
-
-        // Convert water to light
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], waterToLight);
-        }
-
-        // Convert light to temperature
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], lightToTemp);
-        }
-
-        // Convert temperature to humidity
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], tempToHumidity);
-        }
-
-        // Convert humidity to location
-        for (int i = 0; i < locations.length; i++) {
-            locations[i] = convertStage(locations[i], humidityToLocation);
-        }
-
-        // Find the lowest location number
-        return Arrays.stream(locations).min().orElseThrow();
+    private long convertToLocation(Long seed) {
+        long soil = convertStage(seed, seedToSoil);
+        long fertilizer = convertStage(soil, soilToFertilizer);
+        long water = convertStage(fertilizer, fertilizerToWater);
+        long light = convertStage(water, waterToLight);
+        long temperature = convertStage(light, lightToTemp);
+        long humidity = convertStage(temperature, tempToHumidity);
+        return convertStage(humidity, humidityToLocation);
     }
 
     private long convertStage(Long value, List<MapEntry> map) {
