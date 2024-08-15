@@ -12,21 +12,21 @@ class CamelCardsTest {
     void shouldReturn_baibl_for_32T3K() {
         char[] card = "32T3K".toCharArray();
         String expectedResult = "baibl";
-        assertEquals(expectedResult, cc.convertToLettersString(card));
+        assertEquals(expectedResult, cc.convertToLettersStringPart1(card));
     }
 
     @Test
     void shouldReturn_iddjd_for_T55J5() {
         char[] card = "T55J5".toCharArray();
         String expectedResult = "iddjd";
-        assertEquals(expectedResult, cc.convertToLettersString(card));
+        assertEquals(expectedResult, cc.convertToLettersStringPart1(card));
     }
 
     @Test
     void shouldReturn_lleff_for_KK677() {
         char[] card = "KK677".toCharArray();
         String expectedResult = "lleff";
-        assertEquals(expectedResult, cc.convertToLettersString(card));
+        assertEquals(expectedResult, cc.convertToLettersStringPart1(card));
     }
 
     @Test

@@ -25,13 +25,13 @@ public class CamelCards {
     TreeMap<String, Integer> fulls = new TreeMap<>();
 
 
-    public void readFromFile(String fileName) {
+    public void readFromFile(String fileName, String part) {
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             int lineCounter = 0;
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-                processLine(s);
+                processLine(s, part);
                 lineCounter++;
             }
             System.out.println("TOTAL CARDS = " + lineCounter);
@@ -54,28 +54,21 @@ public class CamelCards {
         }
     }
 
-    public void processLine(String line) {
+    public void processLine(String line, String part) {
         String[] split = line.split(" ");
-        String treeMapStringKey = convertToLettersString(split[0].toCharArray());
+        String treeMapStringKey = "";
+        if (part.equals("part_1")) {
+            treeMapStringKey = convertToLettersStringPart1(split[0].toCharArray());
+        } else {
+            treeMapStringKey = convertToLettersStringPart2(split[0].toCharArray());
+        }
         Integer bidValue = Integer.parseInt(split[1]);
         List<Character> cardCharsList = convertToList(split[0].toCharArray());
         Type type = getHandType(cardCharsList);
         addToListAccordingToType(type, treeMapStringKey, bidValue);
     }
 
-//    private Type sortHandInGroup(String handString, Integer bid) {
-//        char[] handChars = handString.toCharArray();
-//        String sortableString = convertToLettersString(handChars);
-////        if (checkForHighCard(handChars)) {
-////            highCards.put(sortableString, bid);
-////            return;
-////        }
-////        Type type = findHandType(handChars);
-////        addToListAccordingToType(type, sortableString, bid);
-//        return findHandType(handChars);
-//    }
-
-    public String convertToLettersString(char[] handChars) {
+    public String convertToLettersStringPart1(char[] handChars) {
         StringBuilder lettersString = new StringBuilder();
         for (char c : handChars) {
             // A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2
@@ -99,13 +92,6 @@ public class CamelCards {
         }
         return lettersString.toString();
     }
-
-//    private boolean checkForHighCard(char[] arr) {
-//        return arr[0] == arr[1] - 1
-//                && arr[1] == arr[2] - 1
-//                && arr[2] == arr[3] - 1
-//                && arr[3] == arr[4] - 1;
-//    }
 
     private Type getHandType(List<Character> charList) {
         // START LIST INSTEAD OF ARRAY HIGHER
