@@ -64,7 +64,7 @@ public class CamelCards {
         }
         Integer bidValue = Integer.parseInt(split[1]);
         List<Character> cardCharsList = convertToList(split[0].toCharArray());
-        Type type = getHandType(cardCharsList);
+        Type type = getHandTypePart1(cardCharsList);
         addToListAccordingToType(type, treeMapStringKey, bidValue);
     }
 
@@ -92,8 +92,61 @@ public class CamelCards {
         }
         return lettersString.toString();
     }
+    public String convertToLettersStringPart2(char[] handChars) {
+        StringBuilder lettersString = new StringBuilder();
+        for (char c : handChars) {
+            // A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J
+            // m, l, k, j, i, h, g, f, e, d, c, b, a
+            switch (c) {
+                case 'J' -> lettersString.append("a");
+                case '2' -> lettersString.append("b");
+                case '3' -> lettersString.append("c");
+                case '4' -> lettersString.append("d");
+                case '5' -> lettersString.append("e");
+                case '6' -> lettersString.append("f");
+                case '7' -> lettersString.append("g");
+                case '8' -> lettersString.append("h");
+                case '9' -> lettersString.append("i");
+                case 'T' -> lettersString.append("j");
+                case 'Q' -> lettersString.append("k");
+                case 'K' -> lettersString.append("l");
+                case 'A' -> lettersString.append("m");
+                default -> lettersString.append('-');
+            }
+        }
+        return lettersString.toString();
+    }
 
-    private Type getHandType(List<Character> charList) {
+    private Type getHandTypePart1(List<Character> charList) {
+        // START LIST INSTEAD OF ARRAY HIGHER
+
+        int removedCards = 0;
+        Type type = HIGH_CARD;
+        while (!charList.isEmpty()) {
+            int fullListSize = charList.size();
+            charList.removeAll(List.of(charList.get(0)));
+            int subtractedListSize = charList.size();
+            removedCards = fullListSize - subtractedListSize;
+            switch (removedCards) {
+                case 2 -> {
+                    switch (type) {
+                        case ONE_PAIR -> type = Type.TWO_PAIRS;
+                        case THREE_OF_KIND -> type = Type.FULL_HOUSE;
+                        default -> type = Type.ONE_PAIR;
+                    }
+                }
+                case 3 -> type = (type == ONE_PAIR) ? Type.FULL_HOUSE : Type.THREE_OF_KIND;
+                case 4 -> type = Type.FOUR_OF_KIND;
+                case 5 -> type = Type.FIVE_OF_KIND;
+                default -> {
+                    break;
+                }
+            }
+        }
+        return type;
+    }
+
+    private Type getHandTypePart2(List<Character> charList) {
         // START LIST INSTEAD OF ARRAY HIGHER
 
         int removedCards = 0;
