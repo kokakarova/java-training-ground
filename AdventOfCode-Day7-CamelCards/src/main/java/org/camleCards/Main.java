@@ -7,7 +7,7 @@ public class Main {
         final long start = System.currentTimeMillis();
         String fileName = "puzzle.txt";
         camelCards.readFromFile(fileName);
-
+        System.out.println("Winnings: " + camelCards.calculateWinnings());
         final long end = System.currentTimeMillis();
         System.out.println("The program was running: " + (end - start) + "ms.");
     }
