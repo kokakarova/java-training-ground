@@ -45,7 +45,8 @@ public class CamelCards {
             System.out.println(kind5s.size() + " kind5s");
 
             int allocatedCards = highCards.size() + onePairs.size()
-                    + twoPairs.size() + kind3s.size() + fulls.size();
+                    + twoPairs.size() + kind3s.size() + fulls.size()
+                    + kind4s.size() + kind5s.size();
             System.out.println("TOTAL CARDS ALLOCATED = " + allocatedCards);
             System.out.println("MISSING CARDS = " + (lineCounter - allocatedCards));
             System.out.println("* * * * * * * * * * * * * * * * * * * * * *");
@@ -58,10 +59,8 @@ public class CamelCards {
         String[] split = line.split(" ");
         String treeMapStringKey = convertToLettersString(split[0].toCharArray());
         Integer bidValue = Integer.parseInt(split[1]);
-
         List<Character> cardCharsList = convertToList(split[0].toCharArray());
         Type type = getHandType(cardCharsList);
-
         addToListAccordingToType(type, treeMapStringKey, bidValue);
     }
 
@@ -116,7 +115,8 @@ public class CamelCards {
         while (!charList.isEmpty()) {
             charList.removeAll(List.of(charList.get(0)));
             int subtractedListSize = charList.size();
-            switch (fullListSize - subtractedListSize) {
+            int removedCards = fullListSize - subtractedListSize;
+            switch (removedCards) {
                 case 2 -> {
                     switch (type) {
                         case ONE_PAIR -> type = Type.TWO_PAIRS;
