@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-import static org.camleCards.Type.FIVE_OF_KIND;
-import static org.camleCards.Type.ONE_PAIR;
+import static org.camleCards.Type.*;
 
 @Data
 public class CamelCards {
@@ -110,12 +109,14 @@ public class CamelCards {
 
     private Type getHandType(List<Character> charList) {
         // START LIST INSTEAD OF ARRAY HIGHER
-        int fullListSize = charList.size();
-        Type type = FIVE_OF_KIND;
+
+        int removedCards = 0;
+        Type type = HIGH_CARD;
         while (!charList.isEmpty()) {
+            int fullListSize = charList.size();
             charList.removeAll(List.of(charList.get(0)));
             int subtractedListSize = charList.size();
-            int removedCards = fullListSize - subtractedListSize;
+            removedCards = fullListSize - subtractedListSize;
             switch (removedCards) {
                 case 2 -> {
                     switch (type) {
@@ -128,15 +129,11 @@ public class CamelCards {
                 case 4 -> type = Type.FOUR_OF_KIND;
                 case 5 -> type = Type.FIVE_OF_KIND;
                 default -> {
-                    if (type.equals(Type.FIVE_OF_KIND)
-                            || type.equals(Type.TWO_PAIRS)) {
-                        type = Type.HIGH_CARD;
-                    } else break;
-                    fullListSize = subtractedListSize;
+                    break;
                 }
             }
         }
-            return type;
+        return type;
     }
 
     private List<Character> convertToList(char[] handChars) {
@@ -155,6 +152,8 @@ public class CamelCards {
             case FOUR_OF_KIND -> kind4s.put(handString, bid);
             case FIVE_OF_KIND -> kind5s.put(handString, bid);
             case FULL_HOUSE -> fulls.put(handString, bid);
+            case HIGH_CARD -> highCards.put(handString, bid);
+            default -> throw new IllegalArgumentException("Unknown hand type: " + handString);
         }
     }
 

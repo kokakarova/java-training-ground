@@ -48,6 +48,8 @@ class CamelCardsTest {
         long expectedResult = 14;
         long actualResult = cc.calculateWinnings();
         assertEquals(expectedResult, actualResult);
+//        assertEquals(2, cc.kind3s.size());
+//        assertEquals(1, cc.highCards.size());
     }
 
     @Test
@@ -62,6 +64,7 @@ class CamelCardsTest {
         long expectedResult = 14;
         long actualResult = cc.calculateWinnings();
         assertEquals(expectedResult, actualResult);
+        assertEquals(3, cc.kind5s.size());
     }
 
     @Test
