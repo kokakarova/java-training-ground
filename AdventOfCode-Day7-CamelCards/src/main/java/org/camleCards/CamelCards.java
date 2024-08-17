@@ -2,6 +2,7 @@ package org.camleCards;
 
 import lombok.Data;
 
+import javax.xml.stream.events.Characters;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,20 +36,21 @@ public class CamelCards {
                 lineCounter++;
             }
             System.out.println("TOTAL CARDS = " + lineCounter);
-            System.out.println(highCards.size() + " highCard");
-            System.out.println(onePairs.size() + " onePairs");
-            System.out.println(twoPairs.size() + " twoPairs");
-            System.out.println(kind3s.size() + " kind3s");
-            System.out.println(fulls.size() + " fulls");
-            System.out.println(kind4s.size() + " kind4s");
-            System.out.println(kind5s.size() + " kind5s");
+//            System.out.println(highCards.size() + " highCard");
+//            System.out.println(onePairs.size() + " onePairs");
+//            System.out.println(twoPairs.size() + " twoPairs");
+//            System.out.println(kind3s.size() + " kind3s");
+//            System.out.println(fulls.size() + " fulls");
+//            System.out.println(kind4s.size() + " kind4s");
+//            System.out.println(kind5s.size() + " kind5s");
 
+//            System.out.println("high-cards = " + highCards);
             int allocatedCards = highCards.size() + onePairs.size()
                     + twoPairs.size() + kind3s.size() + fulls.size()
                     + kind4s.size() + kind5s.size();
-            System.out.println("TOTAL CARDS ALLOCATED = " + allocatedCards);
-            System.out.println("MISSING CARDS = " + (lineCounter - allocatedCards));
-            System.out.println("* * * * * * * * * * * * * * * * * * * * * *");
+//            System.out.println("TOTAL CARDS ALLOCATED = " + allocatedCards);
+//            System.out.println("MISSING CARDS = " + (lineCounter - allocatedCards));
+//            System.out.println("* * * * * * * * * * * * * * * * * * * * * *");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,20 +59,26 @@ public class CamelCards {
     public void processLine(String line, String part) {
         String[] split = line.split(" ");
         String treeMapStringKey = "";
-        if (part.equals("part_1")) {
-            treeMapStringKey = convertToLettersStringPart1(split[0].toCharArray());
-        } else {
-            treeMapStringKey = convertToLettersStringPart2(split[0].toCharArray());
-        }
         Integer bidValue = Integer.parseInt(split[1]);
         List<Character> cardCharsList = convertToList(split[0].toCharArray());
-        Type type = getHandTypePart1(cardCharsList);
+        if (part.equals("part_1")) {
+            treeMapStringKey = convertToLettersStringPart1(cardCharsList);
+        } else {
+            treeMapStringKey = convertToLettersStringPart2(cardCharsList);
+        }
+        Type type = HIGH_CARD;
+        if (part.equals("part_1")) {
+            type = getHandTypePart1(cardCharsList);
+        } else {
+            type = getHandTypePart2(cardCharsList);
+        }
+
         addToListAccordingToType(type, treeMapStringKey, bidValue);
     }
 
-    public String convertToLettersStringPart1(char[] handChars) {
+    public String convertToLettersStringPart1(List<Character> handChars) {
         StringBuilder lettersString = new StringBuilder();
-        for (char c : handChars) {
+        for (Character c : handChars) {
             // A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2
             // m, l, k, j, i, h, g, f, e, d, c, b, a
             switch (c) {
@@ -92,9 +100,10 @@ public class CamelCards {
         }
         return lettersString.toString();
     }
-    public String convertToLettersStringPart2(char[] handChars) {
+
+    public String convertToLettersStringPart2(List<Character> handChars) {
         StringBuilder lettersString = new StringBuilder();
-        for (char c : handChars) {
+        for (Character c : handChars) {
             // A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J
             // m, l, k, j, i, h, g, f, e, d, c, b, a
             switch (c) {
@@ -146,36 +155,67 @@ public class CamelCards {
         return type;
     }
 
-    private Type getHandTypePart2(List<Character> charList) {
+    public Type getHandTypePart2(List<Character> charList) {
         // START LIST INSTEAD OF ARRAY HIGHER
 
         int removedCards = 0;
+        int jokers = 0;
         Type type = HIGH_CARD;
         while (!charList.isEmpty()) {
             int fullListSize = charList.size();
-            charList.removeAll(List.of(charList.get(0)));
+            char checkingChar = charList.getFirst();
+            charList.removeAll(List.of(checkingChar));
             int subtractedListSize = charList.size();
             removedCards = fullListSize - subtractedListSize;
+            if (checkingChar == 'J') {
+                if (removedCards == 5) {
+                    return FIVE_OF_KIND;
+                }
+                jokers = removedCards;
+                continue;
+            }
             switch (removedCards) {
                 case 2 -> {
                     switch (type) {
-                        case ONE_PAIR -> type = Type.TWO_PAIRS;
-                        case THREE_OF_KIND -> type = Type.FULL_HOUSE;
-                        default -> type = Type.ONE_PAIR;
+                        case ONE_PAIR -> type = TWO_PAIRS;
+                        case THREE_OF_KIND -> type = FULL_HOUSE;
+                        default -> type = ONE_PAIR;
                     }
                 }
-                case 3 -> type = (type == ONE_PAIR) ? Type.FULL_HOUSE : Type.THREE_OF_KIND;
-                case 4 -> type = Type.FOUR_OF_KIND;
-                case 5 -> type = Type.FIVE_OF_KIND;
+                case 3 -> type = (type == ONE_PAIR) ? FULL_HOUSE : THREE_OF_KIND;
+                case 4 -> type = FOUR_OF_KIND;
+                case 5 -> type = FIVE_OF_KIND;
                 default -> {
                     break;
                 }
             }
         }
-        return type;
+        ;
+        return jokers == 0 ? type : matchJokers(type, jokers);
     }
 
-    private List<Character> convertToList(char[] handChars) {
+    public Type matchJokers(Type type, int jokersCount) {
+        switch (type) {
+            case FOUR_OF_KIND -> {
+                return FIVE_OF_KIND;
+            }
+            case THREE_OF_KIND -> {
+                return jokersCount == 2 ? FIVE_OF_KIND : FOUR_OF_KIND;
+            }
+            case TWO_PAIRS -> {
+                return FULL_HOUSE;
+            }
+            case ONE_PAIR -> {
+                return jokersCount == 3 ? FIVE_OF_KIND
+                        : jokersCount == 2 ? FOUR_OF_KIND : THREE_OF_KIND;
+            }
+            default -> {
+                return ONE_PAIR;
+            }
+        }
+    }
+
+    public List<Character> convertToList(char[] handChars) {
         List<Character> charList = new ArrayList<>();
         for (int i = 0; i < handChars.length; i++) {
             charList.add(handChars[i]);
@@ -183,7 +223,7 @@ public class CamelCards {
         return charList;
     }
 
-    private void addToListAccordingToType(Type type, String handString, Integer bid) {
+    public void addToListAccordingToType(Type type, String handString, Integer bid) {
         switch (type) {
             case ONE_PAIR -> onePairs.put(handString, bid);
             case TWO_PAIRS -> twoPairs.put(handString, bid);
@@ -199,66 +239,55 @@ public class CamelCards {
     public long calculateWinnings() {
         int rank = 1;
         long winnings = 0;
-//        highCards
-//        onePairs
-//        twoPairs
-//        kind3s
-//        fulls
-//        kind4s
-//        kind5s
-//        System.out.println("* * * * * * * * * * * * * * * * *");
-//        System.out.println("Entering highCard");
-//        System.out.println("highCards.size(): " + highCards.size());
+
         for (var c : highCards.keySet()) {
             winnings += (long) highCards.get(c) * rank;
             rank++;
         }
-//        System.out.println("rank = " + rank);
-//        System.out.println("Entering onePairs");
-//        System.out.println("onePairs.size(): " + onePairs.size());
+//        long highCardsWinnings = winnings;
+//        System.out.println(" - - - - - highCardsWinnings = " + highCardsWinnings);
+
         for (var c : onePairs.keySet()) {
             winnings += (long) onePairs.get(c) * rank;
             rank++;
         }
-//        System.out.println("rank = " + rank);
-//        System.out.println("Entering twoPairs");
-//        System.out.println("twoPairs.size(): " + twoPairs.size());
+//        long onePairWinnings = winnings - highCardsWinnings;
+//        System.out.println(" - - - - - onePairWinnings = " + onePairWinnings);
+
         for (var c : twoPairs.keySet()) {
             winnings += (long) twoPairs.get(c) * rank;
             rank++;
         }
+//        long twoPairWinnings = winnings - onePairWinnings - highCardsWinnings;
+//        System.out.println(" - - - - - twoPairWinnings = " + twoPairWinnings);
 
-//        System.out.println("rank = " + rank);
-//        System.out.println("Entering kind3s");
-//        System.out.println("kind3s.size(): " + kind3s.size());
         for (var c : kind3s.keySet()) {
             winnings += (long) kind3s.get(c) * rank;
             rank++;
         }
+//        long kind3Winnings = winnings - twoPairWinnings - onePairWinnings - highCardsWinnings;
+//        System.out.println(" - - - - - kind3Winnings = " + kind3Winnings);
 
-//        System.out.println("rank = " + rank);
-//        System.out.println("Entering fulls");
-//        System.out.println("fulls.size(): " + fulls.size());
         for (var c : fulls.keySet()) {
             winnings += (long) fulls.get(c) * rank;
             rank++;
         }
+//        long fullWinnings = winnings - kind3Winnings - twoPairWinnings - onePairWinnings - highCardsWinnings;
+//        System.out.println(" - - - - - fullWinnings = " + fullWinnings);
 
-//        System.out.println("rank = " + rank);
-//        System.out.println("Entering kind4s");
-//        System.out.println("kind4s.size(): " + kind4s.size());
         for (var c : kind4s.keySet()) {
             winnings += (long) kind4s.get(c) * rank;
             rank++;
         }
+//        long kind4Winnings = winnings - fullWinnings - kind3Winnings - twoPairWinnings- onePairWinnings - highCardsWinnings;
+//        System.out.println(" - - - - - kind4Winnings = " + kind4Winnings);
 
-//        System.out.println("rank = " + rank);
-//        System.out.println("Entering kind5s");
-//        System.out.println("kind5s.size(): " + kind5s.size());
         for (var c : kind5s.keySet()) {
             winnings += (long) kind5s.get(c) * rank;
             rank++;
         }
+//        long kind5Winnings = winnings - kind4Winnings - fullWinnings - kind3Winnings - twoPairWinnings - onePairWinnings - highCardsWinnings;
+//        System.out.println(" - - - - - kind5Winnings = " + kind5Winnings);
         return winnings;
     }
 
