@@ -345,51 +345,91 @@ class CamelCardsTest {
 
 
         String onePair1 = "28JQ5 397";
-        String card3 = highCard2.split(" ")[0];
+        String card3 = onePair1.split(" ")[0];
         String encoded3 = cc.convertToLettersStringPart2(cc.convertToList(card3.toCharArray()));
         System.out.println(card3 + encoded3);
 
         String onePair2 = "33T4K 449";
-        String card4 = highCard2.split(" ")[0];
+        String card4 = onePair2.split(" ")[0];
         String encoded4 = cc.convertToLettersStringPart2(cc.convertToList(card4.toCharArray()));
         System.out.println(card4 + encoded4);
 
 
         String twoPairs1 = "54225 219";
-        String card5 = highCard2.split(" ")[0];
+        String card5 = twoPairs1.split(" ")[0];
         String encoded5 = cc.convertToLettersStringPart2(cc.convertToList(card5.toCharArray()));
         System.out.println(card5 + encoded5);
 
         String twoPairs2 = "4ATA4 225";
-        String card6 = highCard2.split(" ")[0];
+        String card6 = twoPairs2.split(" ")[0];
         String encoded6 = cc.convertToLettersStringPart2(cc.convertToList(card6.toCharArray()));
         System.out.println(card6 + encoded6);
 
 
         String threeOfKind1 = "4222A 543";
-        String card7 = highCard2.split(" ")[0];
+        String card7 = threeOfKind1.split(" ")[0];
         String encoded7 = cc.convertToLettersStringPart2(cc.convertToList(card7.toCharArray()));
         System.out.println(card7 + encoded7);
 
         String threeOfKind2 = "2J9KK 749";
-        String card8 = highCard2.split(" ")[0];
+        String card8 = threeOfKind2.split(" ")[0];
         String encoded8 = cc.convertToLettersStringPart2(cc.convertToList(card8.toCharArray()));
         System.out.println(card8 + encoded8);
 
         String threeOfKind3 = "JT43J 872";
+        String card9 = threeOfKind3.split(" ")[0];
+        String encoded9 = cc.convertToLettersStringPart2(cc.convertToList(card9.toCharArray()));
+        System.out.println(card9 + encoded9);
+
         String threeOfKind4 = "7775A 318";
+        String card10 = threeOfKind4.split(" ")[0];
+        String encoded10 = cc.convertToLettersStringPart2(cc.convertToList(card10.toCharArray()));
+        System.out.println(card10 + encoded10);
 
         String full1 = "AQAQQ 827";
+        String card11 = full1.split(" ")[0];
+        String encoded11 = cc.convertToLettersStringPart2(cc.convertToList(card11.toCharArray()));
+        System.out.println(card11 + encoded11);
+
         String full2 = "6JAA6 512";
+        String card12 = full2.split(" ")[0];
+        String encoded12 = cc.convertToLettersStringPart2(cc.convertToList(card12.toCharArray()));
+        System.out.println(card12 + encoded12);
+
         String full3 = "73377 847";
+        String card13 = full3.split(" ")[0];
+        String encoded13 = cc.convertToLettersStringPart2(cc.convertToList(card13.toCharArray()));
+        System.out.println(card13 + encoded13);
 
         String fourOfKind1 = "AATAJ 30";
+        String card14 = fourOfKind1.split(" ")[0];
+        String encoded14 = cc.convertToLettersStringPart2(cc.convertToList(card14.toCharArray()));
+        System.out.println(card14 + encoded14);
+
         String fourOfKind2 = "Q8QQQ 321";
+        String card15 = fourOfKind2.split(" ")[0];
+        String encoded15 = cc.convertToLettersStringPart2(cc.convertToList(card15.toCharArray()));
+        System.out.println(card15 + encoded15);
+
         String fourOfKind3 = "K4444 175";
+        String card16 = fourOfKind3.split(" ")[0];
+        String encoded16 = cc.convertToLettersStringPart2(cc.convertToList(card16.toCharArray()));
+        System.out.println(card16 + encoded16);
+
         String fourOfKind4 = "99939 377";
+        String card17 = fourOfKind4.split(" ")[0];
+        String encoded17 = cc.convertToLettersStringPart2(cc.convertToList(card17.toCharArray()));
+        System.out.println(card17 + encoded17);
+
         String fourOfKind5 = "79999 85";
+        String card18 = fourOfKind5.split(" ")[0];
+        String encoded18 = cc.convertToLettersStringPart2(cc.convertToList(card18.toCharArray()));
+        System.out.println(card18 + encoded18);
 
         String fiveOfKind1 = "KJJKK 617";
+        String card19 = fiveOfKind1.split(" ")[0];
+        String encoded19 = cc.convertToLettersStringPart2(cc.convertToList(card19.toCharArray()));
+        System.out.println(card19 + encoded19);
     }
 
     @Test

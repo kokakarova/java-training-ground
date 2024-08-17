@@ -210,7 +210,9 @@ public class CamelCards {
                         : jokersCount == 2 ? FOUR_OF_KIND : THREE_OF_KIND;
             }
             default -> {
-                return ONE_PAIR;
+                return jokersCount == 4 ? FIVE_OF_KIND
+                        : jokersCount == 3 ? FOUR_OF_KIND
+                        : jokersCount == 2 ? THREE_OF_KIND : ONE_PAIR;
             }
         }
     }
@@ -242,6 +244,8 @@ public class CamelCards {
 
         for (var c : highCards.keySet()) {
             winnings += (long) highCards.get(c) * rank;
+            System.out.println("highCards.get(c) = " + highCards.get(c));
+            System.out.println("highCards = " + highCards);
             rank++;
         }
 //        long highCardsWinnings = winnings;
