@@ -2,7 +2,6 @@ package org.camleCards;
 
 import lombok.Data;
 
-import javax.xml.stream.events.Characters;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +15,6 @@ import static org.camleCards.Type.*;
 @Data
 public class CamelCards {
 
-    //    HashMap<String, Integer[]> handsAndBids = new HashMap<>();
     TreeMap<String, Integer> highCards = new TreeMap<>();
     TreeMap<String, Integer> onePairs = new TreeMap<>();
     TreeMap<String, Integer> twoPairs = new TreeMap<>();
@@ -30,27 +28,13 @@ public class CamelCards {
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-            int lineCounter = 0;
             for (String s = reader.readLine(); s != null; s = reader.readLine()) {
                 processLine(s, part);
-                lineCounter++;
             }
-            System.out.println("TOTAL CARDS = " + lineCounter);
-//            System.out.println(highCards.size() + " highCard");
-//            System.out.println(onePairs.size() + " onePairs");
-//            System.out.println(twoPairs.size() + " twoPairs");
-//            System.out.println(kind3s.size() + " kind3s");
-//            System.out.println(fulls.size() + " fulls");
-//            System.out.println(kind4s.size() + " kind4s");
-//            System.out.println(kind5s.size() + " kind5s");
 
-//            System.out.println("high-cards = " + highCards);
             int allocatedCards = highCards.size() + onePairs.size()
                     + twoPairs.size() + kind3s.size() + fulls.size()
                     + kind4s.size() + kind5s.size();
-//            System.out.println("TOTAL CARDS ALLOCATED = " + allocatedCards);
-//            System.out.println("MISSING CARDS = " + (lineCounter - allocatedCards));
-//            System.out.println("* * * * * * * * * * * * * * * * * * * * * *");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,8 +63,6 @@ public class CamelCards {
     public String convertToLettersStringPart1(List<Character> handChars) {
         StringBuilder lettersString = new StringBuilder();
         for (Character c : handChars) {
-            // A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2
-            // m, l, k, j, i, h, g, f, e, d, c, b, a
             switch (c) {
                 case '2' -> lettersString.append("a");
                 case '3' -> lettersString.append("b");
@@ -104,8 +86,6 @@ public class CamelCards {
     public String convertToLettersStringPart2(List<Character> handChars) {
         StringBuilder lettersString = new StringBuilder();
         for (Character c : handChars) {
-            // A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J
-            // m, l, k, j, i, h, g, f, e, d, c, b, a
             switch (c) {
                 case 'J' -> lettersString.append("a");
                 case '2' -> lettersString.append("b");
@@ -127,7 +107,6 @@ public class CamelCards {
     }
 
     private Type getHandTypePart1(List<Character> charList) {
-        // START LIST INSTEAD OF ARRAY HIGHER
 
         int removedCards = 0;
         Type type = HIGH_CARD;
@@ -156,7 +135,6 @@ public class CamelCards {
     }
 
     public Type getHandTypePart2(List<Character> charList) {
-        // START LIST INSTEAD OF ARRAY HIGHER
 
         int removedCards = 0;
         int jokers = 0;
@@ -244,54 +222,38 @@ public class CamelCards {
 
         for (var c : highCards.keySet()) {
             winnings += (long) highCards.get(c) * rank;
-            System.out.println("highCards.get(c) = " + highCards.get(c));
-            System.out.println("highCards = " + highCards);
             rank++;
         }
-//        long highCardsWinnings = winnings;
-//        System.out.println(" - - - - - highCardsWinnings = " + highCardsWinnings);
 
         for (var c : onePairs.keySet()) {
             winnings += (long) onePairs.get(c) * rank;
             rank++;
         }
-//        long onePairWinnings = winnings - highCardsWinnings;
-//        System.out.println(" - - - - - onePairWinnings = " + onePairWinnings);
 
         for (var c : twoPairs.keySet()) {
             winnings += (long) twoPairs.get(c) * rank;
             rank++;
         }
-//        long twoPairWinnings = winnings - onePairWinnings - highCardsWinnings;
-//        System.out.println(" - - - - - twoPairWinnings = " + twoPairWinnings);
 
         for (var c : kind3s.keySet()) {
             winnings += (long) kind3s.get(c) * rank;
             rank++;
         }
-//        long kind3Winnings = winnings - twoPairWinnings - onePairWinnings - highCardsWinnings;
-//        System.out.println(" - - - - - kind3Winnings = " + kind3Winnings);
 
         for (var c : fulls.keySet()) {
             winnings += (long) fulls.get(c) * rank;
             rank++;
         }
-//        long fullWinnings = winnings - kind3Winnings - twoPairWinnings - onePairWinnings - highCardsWinnings;
-//        System.out.println(" - - - - - fullWinnings = " + fullWinnings);
 
         for (var c : kind4s.keySet()) {
             winnings += (long) kind4s.get(c) * rank;
             rank++;
         }
-//        long kind4Winnings = winnings - fullWinnings - kind3Winnings - twoPairWinnings- onePairWinnings - highCardsWinnings;
-//        System.out.println(" - - - - - kind4Winnings = " + kind4Winnings);
 
         for (var c : kind5s.keySet()) {
             winnings += (long) kind5s.get(c) * rank;
             rank++;
         }
-//        long kind5Winnings = winnings - kind4Winnings - fullWinnings - kind3Winnings - twoPairWinnings - onePairWinnings - highCardsWinnings;
-//        System.out.println(" - - - - - kind5Winnings = " + kind5Winnings);
         return winnings;
     }
 
