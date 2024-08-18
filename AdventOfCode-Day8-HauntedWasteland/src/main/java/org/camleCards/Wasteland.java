@@ -13,44 +13,37 @@ public class Wasteland {
     char[] directions = "LLRLRRRLLLRLRRLRRRLRLRRLRLRLRRRLRRRLRLRLRRLLRRRLRRLRRLLRLRRRLRLRLLRRRLLRRRLRLRRRLRRRLRRRLLLRRRLRRLRRLRLRRLRLRRRLRLRRLRLRLRRRLRLLLRRRLLLRLRRRLRLRRLRLRLRLRRLRRLRRLRLRRRLRRRLRRLRRRLRRLRRLRRRLLRLRRLLLRRLRRLRLRLLLRRLRRLRRRLRRLLRLRRRLRRRLRRLRRLRLRRLRLRRRLRRLRRRLLRRRLRLRLLLRRRLLLRRLLRRLRLRRLRLLLRRRR".toCharArray();
     //    char[] directions = "RL".toCharArray();
 //    char[] directions = "LLR".toCharArray();
+//    char[] directions = "LR".toCharArray();
     Map<String, String[]> locationsMap = new HashMap<>();
     List<String> startingNodes = new ArrayList<>();
     List<String> endingNodes = new ArrayList<>();
 
-    public void readFromFile(String fileName) {
+    public void readFromFile(String fileName, int part) {
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             int lineCounter = 0;
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                processLine(line);
+                processLine(line, part);
                 lineCounter++;
             }
-            System.out.println(startingNodes.size() + " starting Nodes");
-            for (String node: startingNodes) {
-                System.out.println(node);
-            }
-            System.out.println(endingNodes.size() + " ending Nodes");
-            for (String node: endingNodes) {
-                System.out.println(node);
-            }
-//            System.out.println("directions.length = " + directions.length);
-//            System.out.println("locationsMap size = " + locationsMap.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void processLine(String line) {
+    public void processLine(String line, int part) {
         String location = line.substring(0, 3);
         String left = line.substring(7, 10);
         String right = line.substring(12, line.length() - 1);
         locationsMap.put(location, new String[]{left, right});
-        if (location.endsWith("A")) {
-            startingNodes.add(location);
-        }
-        if (location.endsWith("Z")) {
-            endingNodes.add(location);
+        if (part == 2) {
+            if (location.endsWith("A")) {
+                startingNodes.add(location);
+            }
+            if (location.endsWith("Z")) {
+                endingNodes.add(location);
+            }
         }
     }
 
@@ -79,7 +72,32 @@ public class Wasteland {
         int left = 0;
         int right = 1;
 
+        for (int i = 0; i < directions.length; i++) {
+//        for (int i = 0; i < 3; i++) {
+            steps++;
+            System.out.println("------------------------------");
+            System.out.println("startingNodes_1 = " + startingNodes);
+            int finalI = i;
+            startingNodes = locationsMap.keySet().stream()
+                    .filter(l -> startingNodes.contains(l))
+                    .map(loc -> directions[finalI] == 'L' ? locationsMap.get(loc)[left]
+                            : locationsMap.get(loc)[right]).toList();
+            System.out.println("startingNodes_2 = " + startingNodes);
+            boolean allNodesEndWithZ = checkNewNodesForZ();
+            System.out.println("allNodesEndWithZ = " + allNodesEndWithZ);
+            if (allNodesEndWithZ) {
+                return steps;
+            } else if (i == directions.length - 1) {
+                i = -1;
+            }
+
+        }
+
         return steps;
+    }
+
+    private boolean checkNewNodesForZ() {
+        return startingNodes.stream().allMatch(n -> n.endsWith("Z"));
     }
 
 }
