@@ -71,18 +71,16 @@ public class Wasteland {
         int steps = 0;
         int left = 0;
         int right = 1;
-
+//        String startingNodeAAA = "HJA";
         for (int i = 0; i < directions.length; i++) {
-//        for (int i = 0; i < 3; i++) {
             steps++;
             System.out.println("------------------------------");
-            System.out.println("startingNodes_1 = " + startingNodes);
             int finalI = i;
+            System.out.println("finalI = " + finalI);
             startingNodes = locationsMap.keySet().stream()
                     .filter(l -> startingNodes.contains(l))
                     .map(loc -> directions[finalI] == 'L' ? locationsMap.get(loc)[left]
                             : locationsMap.get(loc)[right]).toList();
-            System.out.println("startingNodes_2 = " + startingNodes);
             boolean allNodesEndWithZ = checkNewNodesForZ();
             System.out.println("allNodesEndWithZ = " + allNodesEndWithZ);
             if (allNodesEndWithZ) {
@@ -96,7 +94,7 @@ public class Wasteland {
         return steps;
     }
 
-    private boolean checkNewNodesForZ() {
+    private boolean checkNewNodesForZ(/*String node*/) {
         return startingNodes.stream().allMatch(n -> n.endsWith("Z"));
     }
 
