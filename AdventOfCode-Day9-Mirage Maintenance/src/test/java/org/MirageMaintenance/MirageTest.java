@@ -33,4 +33,19 @@ class MirageTest {
         int expectedResult = 68;
         assertEquals(expectedResult, actualResult);
     }
+
+    @Test
+    void shouldReturn114_ForPuzzleExample() {
+        int actualResult = mirage.readFromFile("puzzleExample.txt", 1);
+        int expectedResult = 114;
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    void shouldReturn_IntegerList_With_1_AsFirstElement() {
+        String testLine = "1 4";
+        int actualResult = mirage.convertLineToList(testLine).get(0);
+        int expectedResult = 1;
+        assertEquals(expectedResult, actualResult);
+    }
 }

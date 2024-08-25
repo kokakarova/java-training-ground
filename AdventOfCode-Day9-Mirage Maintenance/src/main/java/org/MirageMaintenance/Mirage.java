@@ -2,13 +2,34 @@ package org.MirageMaintenance;
 
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.*;
 
 @Data
 public class Mirage {
+
+    public int readFromFile(String fileName, int part) {
+        try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
+            assert file != null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+            int sum = 0;
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                List<Integer> currentSequence = convertLineToList(line);
+                sum += getPrediction(currentSequence);
+            }
+            return sum;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public List<Integer> convertLineToList(String line) {
+        return Arrays.stream(line.split(" ")).map(Integer::parseInt).toList();
+    }
 
     public int getPrediction(List<Integer> startingSequence) {
         Map<Integer, List<Integer>> sequencies = new HashMap<>();
@@ -35,7 +56,6 @@ public class Mirage {
         for (int i = 0; i < startingSequence.size() - 1; i++) {
             nextSequence.add(startingSequence.get(i + 1) - startingSequence.get(i));
         }
-        System.out.println("nextSequence = " + nextSequence);
         return nextSequence;
     }
 
