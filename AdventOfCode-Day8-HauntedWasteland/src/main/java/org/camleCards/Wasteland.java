@@ -36,11 +36,6 @@ public class Wasteland {
         String left = line.substring(7, 10);
         String right = line.substring(12, line.length() - 1);
         locationsMap.put(location, new String[]{left, right});
-//        if (part == 2) {
-//            if (location.endsWith("A")) {
-//                startingNodes.add(location);
-//            }
-//        }
     }
 
     public int findZZZ() {
@@ -63,18 +58,17 @@ public class Wasteland {
         return steps;
     }
 
-    public List<Integer> find10ZNodes(String node) {
-        List<Integer> listOfSteps = new ArrayList<>();
+    public int find10ZNodes(String node) {
         int steps = 0;
         int left = 0;
         int right = 1;
         String currentLocation = node;
-        for (int i = 0; listOfSteps.size() < 10; i++) {
+        for (int i = 0; i < directions.length; i++) {
             steps++;
             currentLocation = directions[i] == 'L' ? locationsMap.get(currentLocation)[left]
                     : locationsMap.get(currentLocation)[right];
             if (currentLocation.endsWith("Z")) {
-                listOfSteps.add(steps);
+                return steps;
             }
             if (i == directions.length - 1) {
                 i = -1;
@@ -82,11 +76,22 @@ public class Wasteland {
 
         }
 
-        return listOfSteps;
+        return steps;
     }
 
-    private boolean checkNewNodesForZ(/*String node*/) {
-        return startingNodes.stream().allMatch(n -> n.endsWith("Z"));
+    public long lcm(long number1, long number2) {
+        if (number1 == 0 || number2 == 0) {
+            return 0;
+        }
+        long absNumber1 = Math.abs(number1);
+        long absNumber2 = Math.abs(number2);
+        long absHigherNumber = Math.max(absNumber1, absNumber2);
+        long absLowerNumber = Math.min(absNumber1, absNumber2);
+        long lcm = absHigherNumber;
+        while (lcm % absLowerNumber != 0) {
+            lcm += absHigherNumber;
+        }
+        return lcm;
     }
 
 }

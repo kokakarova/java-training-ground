@@ -22,10 +22,13 @@ public class Main {
                 w.readFromFile("puzzle.txt", 2);
                 List<String> startingNodes = List.of("AAA", "QRA", "KQA", "DFA", "DBA", "HJA");
                 for (String node : startingNodes) {
-                    List<Integer> tenZLocations = w.find10ZNodes(node);
-                    allSteps.addAll(w.find10ZNodes(node));
-                    System.out.println("For " + node + ", **Z was found in " + tenZLocations + " steps");
+                    allSteps.add(w.find10ZNodes(node));
                 }
+                long lcm = allSteps.get(0);
+                for (int i = 1; i < allSteps.size(); i++) {
+                    lcm = w.lcm(lcm, (long) allSteps.get(i));
+                }
+                System.out.println("Answer to Part 2 is " + lcm);
             }
             default -> System.out.println("You entered wrong part number");
         }
