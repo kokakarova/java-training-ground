@@ -27,7 +27,7 @@ class WastelandTest {
     void shouldReturn_6_PuzzleExamplePart2_1() {
         wasteland.readFromFile("puzzleExamplePart2_1.txt", 2);
         int expected = 6;
-        int actual = wasteland.findAllZNodes();
+        int actual = wasteland.find10ZNodes();
         assertEquals(expected, actual);
 
     }

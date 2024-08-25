@@ -15,8 +15,7 @@ public class Wasteland {
 //    char[] directions = "LLR".toCharArray();
 //    char[] directions = "LR".toCharArray();
     Map<String, String[]> locationsMap = new HashMap<>();
-    List<String> startingNodes = new ArrayList<>();
-    List<String> endingNodes = new ArrayList<>();
+    List<String> startingNodes = List.of("AAA", "QRA", "KQA", "DFA", "DBA", "HJA");
 
     public void readFromFile(String fileName, int part) {
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
@@ -37,14 +36,11 @@ public class Wasteland {
         String left = line.substring(7, 10);
         String right = line.substring(12, line.length() - 1);
         locationsMap.put(location, new String[]{left, right});
-        if (part == 2) {
-            if (location.endsWith("A")) {
-                startingNodes.add(location);
-            }
-            if (location.endsWith("Z")) {
-                endingNodes.add(location);
-            }
-        }
+//        if (part == 2) {
+//            if (location.endsWith("A")) {
+//                startingNodes.add(location);
+//            }
+//        }
     }
 
     public int findZZZ() {
@@ -67,31 +63,26 @@ public class Wasteland {
         return steps;
     }
 
-    public int findAllZNodes() {
+    public List<Integer> find10ZNodes(String node) {
+        List<Integer> listOfSteps = new ArrayList<>();
         int steps = 0;
         int left = 0;
         int right = 1;
-//        String startingNodeAAA = "HJA";
-        for (int i = 0; i < directions.length; i++) {
+        String currentLocation = node;
+        for (int i = 0; listOfSteps.size() < 10; i++) {
             steps++;
-            System.out.println("------------------------------");
-            int finalI = i;
-            System.out.println("finalI = " + finalI);
-            startingNodes = locationsMap.keySet().stream()
-                    .filter(l -> startingNodes.contains(l))
-                    .map(loc -> directions[finalI] == 'L' ? locationsMap.get(loc)[left]
-                            : locationsMap.get(loc)[right]).toList();
-            boolean allNodesEndWithZ = checkNewNodesForZ();
-            System.out.println("allNodesEndWithZ = " + allNodesEndWithZ);
-            if (allNodesEndWithZ) {
-                return steps;
-            } else if (i == directions.length - 1) {
+            currentLocation = directions[i] == 'L' ? locationsMap.get(currentLocation)[left]
+                    : locationsMap.get(currentLocation)[right];
+            if (currentLocation.endsWith("Z")) {
+                listOfSteps.add(steps);
+            }
+            if (i == directions.length - 1) {
                 i = -1;
             }
 
         }
 
-        return steps;
+        return listOfSteps;
     }
 
     private boolean checkNewNodesForZ(/*String node*/) {
