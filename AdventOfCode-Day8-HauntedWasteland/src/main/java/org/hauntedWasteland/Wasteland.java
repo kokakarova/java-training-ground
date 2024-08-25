@@ -1,4 +1,4 @@
-package org.camleCards;
+package org.hauntedWasteland;
 
 import lombok.Data;
 
