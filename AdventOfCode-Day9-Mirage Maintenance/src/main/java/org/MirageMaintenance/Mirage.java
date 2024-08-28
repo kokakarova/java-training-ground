@@ -12,23 +12,18 @@ import java.util.*;
 public class Mirage {
 
     public int readFromFile(String fileName, int part) {
+        int sum = 0;
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-            int sum = 0;
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                List<Integer> currentSequence = convertLineToList(line);
+                List<Integer> currentSequence = Arrays.stream(line.split(" ")).map(Integer::parseInt).toList();
                 sum += getPrediction(currentSequence);
             }
-            return sum;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return -1;
-    }
-
-    public List<Integer> convertLineToList(String line) {
-        return Arrays.stream(line.split(" ")).map(Integer::parseInt).toList();
+        return sum;
     }
 
     public int getPrediction(List<Integer> startingSequence) {
@@ -48,7 +43,8 @@ public class Mirage {
     }
 
     private boolean checkLastSequence(List<Integer> sequence) {
-        return sequence.stream().reduce(0, Integer::sum) == 0;
+        return sequence.stream().allMatch(n -> n == 0);
+//        return sequence.stream().reduce(0, Integer::sum) == 0;
     }
 
     private List<Integer> getNextSequence(List<Integer> startingSequence) {
@@ -59,11 +55,11 @@ public class Mirage {
         return nextSequence;
     }
 
-    private int calculatePrediction(Map<Integer, List<Integer>> sequences) {
+    private int calculatePrediction(Map<Integer, List<Integer>> sequencesMap) {
         int prediction = 0;
-        int lastIndex = sequences.size() - 1;
-        for (int i = lastIndex - 1; i >= 0; i--) {
-            List<Integer> currentSequence = sequences.get(i);
+        int zeroSequenceIndex = sequencesMap.size() - 1;
+        for (int i = zeroSequenceIndex - 1; i >= 0; i--) {
+            List<Integer> currentSequence = sequencesMap.get(i);
             prediction += currentSequence.getLast();
         }
         return prediction;
