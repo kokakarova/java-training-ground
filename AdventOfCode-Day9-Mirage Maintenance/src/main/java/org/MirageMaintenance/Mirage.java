@@ -38,7 +38,7 @@ public class Mirage {
             sequencies.put(index, nextSequence);
             sequenceOfZeros = checkLastSequence(sequencies.get(index));
         }
-        return part == 1 ? calculatePredictionPart1(sequencies) : calculatePredictionPart2(sequencies);
+        return calculatePredictionPart(sequencies, part);
     }
 
     private boolean checkLastSequence(List<Integer> sequence) {
@@ -53,23 +53,18 @@ public class Mirage {
         return nextSequence;
     }
 
-    private int calculatePredictionPart1(Map<Integer, List<Integer>> sequencesMap) {
+    private int calculatePredictionPart(Map<Integer, List<Integer>> sequencesMap, int part) {
         int prediction = 0;
         int zeroSequenceIndex = sequencesMap.size() - 1;
         for (int i = zeroSequenceIndex - 1; i >= 0; i--) {
             List<Integer> currentSequence = sequencesMap.get(i);
-            prediction += currentSequence.getLast();
+            if (part == 1) {
+                prediction += currentSequence.getLast();
+            } else {
+                prediction = currentSequence.getFirst() - prediction;
+            }
         }
         return prediction;
     }
 
-    private int calculatePredictionPart2(Map<Integer, List<Integer>> sequencesMap) {
-        int prediction = 0;
-        int zeroSequenceIndex = sequencesMap.size() - 1;
-        for (int i = zeroSequenceIndex - 1; i >= 0; i--) {
-            List<Integer> currentSequence = sequencesMap.get(i);
-            prediction = currentSequence.getFirst() - prediction;
-        }
-        return prediction;
-    }
 }

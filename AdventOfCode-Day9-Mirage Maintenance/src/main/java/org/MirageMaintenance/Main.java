@@ -11,11 +11,13 @@ public class Main {
         final long start = System.currentTimeMillis();
         switch (part) {
             case 1 -> {
-                mirage.readFromFile("puzzle.txt", 1);
                 System.out.println("The correct answer for Part 1 should be: "
                         + mirage.readFromFile("puzzle.txt", 1));
             }
-            case 2 -> System.out.println("No solution yet for Part 2");
+            case 2 -> {
+                System.out.println("The correct answer for Part 2 should be: "
+                        + mirage.readFromFile("puzzle.txt", 2));
+            }
             default -> System.out.println("You entered wrong part number");
         }
 
@@ -26,6 +28,6 @@ public class Main {
 }
 
 /*
-* PART - 2
-* X -
-* */
+ * PART - 2
+ * X -
+ * */
