@@ -44,7 +44,6 @@ public class Mirage {
 
     private boolean checkLastSequence(List<Integer> sequence) {
         return sequence.stream().allMatch(n -> n == 0);
-//        return sequence.stream().reduce(0, Integer::sum) == 0;
     }
 
     private List<Integer> getNextSequence(List<Integer> startingSequence) {
