@@ -18,7 +18,7 @@ public class Mirage {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 List<Integer> currentSequence = Arrays.stream(line.split(" ")).map(Integer::parseInt).toList();
-                sum += getPrediction(currentSequence);
+                sum += getPrediction(currentSequence, part);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -26,7 +26,7 @@ public class Mirage {
         return sum;
     }
 
-    public int getPrediction(List<Integer> startingSequence) {
+    public int getPrediction(List<Integer> startingSequence, int part) {
         Map<Integer, List<Integer>> sequencies = new HashMap<>();
         int index = 0;
         int prediction = 0;
@@ -38,13 +38,11 @@ public class Mirage {
             sequencies.put(index, nextSequence);
             sequenceOfZeros = checkLastSequence(sequencies.get(index));
         }
-
-        return calculatePrediction(sequencies);
+        return calculatePredictionPart(sequencies, part);
     }
 
     private boolean checkLastSequence(List<Integer> sequence) {
         return sequence.stream().allMatch(n -> n == 0);
-//        return sequence.stream().reduce(0, Integer::sum) == 0;
     }
 
     private List<Integer> getNextSequence(List<Integer> startingSequence) {
@@ -55,13 +53,18 @@ public class Mirage {
         return nextSequence;
     }
 
-    private int calculatePrediction(Map<Integer, List<Integer>> sequencesMap) {
+    private int calculatePredictionPart(Map<Integer, List<Integer>> sequencesMap, int part) {
         int prediction = 0;
         int zeroSequenceIndex = sequencesMap.size() - 1;
         for (int i = zeroSequenceIndex - 1; i >= 0; i--) {
             List<Integer> currentSequence = sequencesMap.get(i);
-            prediction += currentSequence.getLast();
+            if (part == 1) {
+                prediction += currentSequence.getLast();
+            } else {
+                prediction = currentSequence.getFirst() - prediction;
+            }
         }
         return prediction;
     }
+
 }
