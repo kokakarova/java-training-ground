@@ -5,5 +5,6 @@ public class Main {
         PipeMaze pipeMaze = new PipeMaze();
         pipeMaze.readFromFile("puzzle.txt", 1);
 
+        System.out.println("FURTHEST POINT: " + pipeMaze.getFurthestVertex());
     }
 }
