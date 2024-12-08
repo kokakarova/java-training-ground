@@ -34,8 +34,6 @@ public class PipeMaze {
                 char[] lineChars = line.toCharArray();
                 allocateCharacters(lineNumber, lineChars);
             }
-            System.out.println("dashVertexes = " + dashVertexes);
-            System.out.println("pipeVertexes = " + pipeVertexes);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -84,15 +82,10 @@ public class PipeMaze {
         long stepCounter = 1;
         int startLine = currentStep.getLine();
         int startPosition = currentStep.getPosition();
-        System.out.println("stepCounter = " + stepCounter);
-        System.out.println("currentStep = " + currentStep);
         boolean fullCircleComplete = false;
 
         while (!fullCircleComplete) {
             stepCounter++;
-            System.out.println("---------------------------------");
-            System.out.println("stepCounter = " + stepCounter);
-            System.out.println("currentStep = " + currentStep);
 
             switch (currentStep.comingFrom) {
                 case "west" -> {
@@ -131,7 +124,6 @@ public class PipeMaze {
             }
 
         }
-        System.out.println("currentStep = " + currentStep);
         return stepCounter / 2;
     }
 
@@ -142,15 +134,12 @@ public class PipeMaze {
     private void setNextStepComingFromWhenCurrentFromSouth(NextStep currentVertex) {
         if (pipeVertexes.containsKey(currentVertex.getLine())
                 && pipeVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in pipes");
             currentStep.setComingFrom("south");
         } else if (sevenSignVertexes.containsKey(currentVertex.getLine())
                 && sevenSignVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in 7s");
             currentStep.setComingFrom("east");
         } else if (fSignVertexes.containsKey(currentVertex.getLine())
                 && fSignVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in Fs");
             currentStep.setComingFrom("west");
         } else {
             throw new IllegalStateException("Unexpected value: " + currentStep);
@@ -160,15 +149,12 @@ public class PipeMaze {
     private void setNextStepComingFromWhenCurrentFromNorth(NextStep currentVertex) {
         if (pipeVertexes.containsKey(currentVertex.getLine())
                 && pipeVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in pipes");
             currentStep.setComingFrom("north");
         } else if (lSignVertexes.containsKey(currentVertex.getLine())
                 && lSignVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in Ls");
             currentStep.setComingFrom("west");
         } else if (jSignVertexes.containsKey(currentVertex.getLine())
                 && jSignVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in Js");
             currentStep.setComingFrom("east");
         } else {
             throw new IllegalStateException("Unexpected value: " + currentStep);
@@ -178,15 +164,12 @@ public class PipeMaze {
     private void setNextStepComingFromWhenCurrentFromEast(NextStep currentVertex) {
         if (lSignVertexes.containsKey(currentVertex.getLine())
                 && lSignVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in Ls");
             currentStep.setComingFrom("south");
         } else if (fSignVertexes.containsKey(currentVertex.getLine())
                 && fSignVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in Fs");
             currentStep.setComingFrom("north");
         } else if (dashVertexes.containsKey(currentVertex.getLine())
                 && dashVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in dashes");
             currentStep.setComingFrom("east");
         } else {
             throw new IllegalStateException("Unexpected value: " + currentStep);
@@ -198,15 +181,12 @@ public class PipeMaze {
 
         if (dashVertexes.containsKey(currentVertex.getLine())
                 && dashVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in dashes");
             currentStep.setComingFrom("west");
         } else if (jSignVertexes.containsKey(currentVertex.getLine())
                 && jSignVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in Js");
             currentStep.setComingFrom("south");
         } else if (sevenSignVertexes.containsKey(currentVertex.getLine())
                 && sevenSignVertexes.get(currentVertex.getLine()).contains(currentVertex.getPosition())) {
-            System.out.println("found in 7s");
             currentStep.setComingFrom("north");
         } else {
             throw new IllegalStateException("Unexpected value: " + currentStep);
@@ -217,14 +197,6 @@ public class PipeMaze {
         int increment = direction.equals("west") ? -1 : 1;
         String[] floatStringArr = String.valueOf(startPosition).split("\\.");
         String numToIncreaseString = floatStringArr[1];
-//        int incrementedInt = (Integer.parseInt(numToIncreaseString) + increment);
-
-//        System.out.println("incrementedInt = " + incrementedInt);
-//        float nextPosition = ((float) (Integer.parseInt(numToIncreaseString) + increment) / 1000)
-//                + (float) Integer.parseInt(floatStringArr[0]);
-
-//        System.out.println("numToIncreaseString = " + numToIncreaseString);
-//        System.out.println(" int nextPosition = " + nextPosition);
 
         return ((float) (Integer.parseInt(numToIncreaseString) + increment) / 1000)
                 + (float) Integer.parseInt(floatStringArr[0]);
