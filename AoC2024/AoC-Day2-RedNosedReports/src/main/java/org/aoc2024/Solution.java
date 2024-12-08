@@ -46,14 +46,31 @@ public class Solution {
         if (unsafeLevel == -1) {
             return true;
         } else {
-            levels.remove(unsafeLevel);
-            return checkUnsafeLevel(levels) == -1;
+            for (int i = 0; i < levels.size(); i++) {
+                List<Integer> copyOfLevels = new ArrayList<>(levels);
+                copyOfLevels = removeElementFromList(copyOfLevels, i);
+                unsafeLevel = checkUnsafeLevel(copyOfLevels);
+                if (unsafeLevel == -1) {
+                    return true;
+                }
+            }
+            return false;
         }
+    }
+
+    private List<Integer> removeElementFromList(List<Integer> levelsList, int indexToRemove) {
+        if (indexToRemove == 0) {
+            return levelsList.subList(1, levelsList.size());
+        }
+        if (indexToRemove >= levelsList.size()) {
+            return levelsList;
+        }
+        levelsList.remove(indexToRemove);
+        return levelsList;
     }
 
     private int checkUnsafeLevel(List<Integer> levels) {
         boolean increasingOrder = levels.get(0) < levels.get(1);
-        int problemLevel = -100;
         for (int i = 1; i < levels.size(); i++) {
             int levelDifference = levels.get(i) - levels.get(i - 1);
             if (Math.abs(levelDifference) > 3 || levelDifference == 0) {
