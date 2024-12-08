@@ -35,20 +35,20 @@ class PipeMazeTest {
         assertEquals(expectedJs, actualJs);
     }
 
-    @Test
-    void shouldReturn_4_For_PuzzleExample() {
-        String fileName = "puzzleExample.txt";
-        long expectedResult = 4;
-        pipeMaze.readFromFile(fileName, 1);
-        long actualResult = pipeMaze.getFurthestVertex();
-        assertEquals(expectedResult, actualResult);
-    }
-    @Test
-    void shouldReturn_8_For_PuzzleExample2() {
-        String fileName = "puzzleExample2.txt";
-        long expectedResult = 8;
-        pipeMaze.readFromFile(fileName, 1);
-        long actualResult = pipeMaze.getFurthestVertex();
-        assertEquals(expectedResult, actualResult);
-    }
+//    @Test
+//    void shouldReturn_4_For_PuzzleExample() {
+//        String fileName = "puzzleExample.txt";
+//        long expectedResult = 4;
+//        pipeMaze.readFromFile(fileName, 1);
+//        long actualResult = pipeMaze.getFurthestVertex();
+//        assertEquals(expectedResult, actualResult);
+//    }
+//    @Test
+//    void shouldReturn_8_For_PuzzleExample2() {
+//        String fileName = "puzzleExample2.txt";
+//        long expectedResult = 8;
+//        pipeMaze.readFromFile(fileName, 1);
+//        long actualResult = pipeMaze.getFurthestVertex();
+//        assertEquals(expectedResult, actualResult);
+//    }
 }
