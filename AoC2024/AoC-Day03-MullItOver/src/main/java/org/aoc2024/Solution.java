@@ -16,19 +16,37 @@ public class Solution {
 
     private int sumOfMultiples = 0;
 
-    public void getSolution(String fileName) {
+    public void getSolution(String fileName, int partNumber) {
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
+            StringBuilder fullInput = new StringBuilder();
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                processLine(line);
+                if (partNumber == 1) {
+                    matchValidMuls(line);
+                }
+                if (partNumber == 2) {
+                    fullInput.append(line);
+                }
+            }
+            if (partNumber == 2) {
+                processLinePart2(fullInput.toString());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void processLine(String line) {
+    private void processLinePart2(String line) {
+        String regexDont = "[d][o][n]['][t][(][)][\\d\\D\\w\\s]+";
+        String regexDo = "[d][o][(][)]";
+        String[] stringWithoutDo = line.split(regexDo);
+        for (String s : stringWithoutDo) {
+            matchValidMuls(s.split(regexDont)[0]);
+        }
+    }
+
+    private void matchValidMuls(String line) {
         String regex = "[m][u][l][(][\\d]{1,3}[,][\\d]{1,3}[)]";
         List<String> matchedStrings = matchToRegex(regex, line);
         for (String matchedString : matchedStrings) {
@@ -51,6 +69,4 @@ public class Solution {
         }
         return matches;
     }
-
-
 }
