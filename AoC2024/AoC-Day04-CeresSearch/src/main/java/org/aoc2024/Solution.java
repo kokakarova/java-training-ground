@@ -43,13 +43,6 @@ public class Solution {
     }
 
     private int searchGridPart2(char[][] puzzleGrid, int row, int col, String word) {
-
-        int[] x1Back = new int[]{-1, 1};
-        int[] y1Back = new int[]{-1, -1};
-        int[] x2Ahead = new int[]{-1, 1};
-        int[] y2Ahead = new int[]{-1, -1};
-        int[] x2Back = new int[]{-1, 1};
-        int[] y2Back = new int[]{1, 1};
         int m = puzzleGrid.length;
         int n = puzzleGrid[0].length;
         int matches = 0;
@@ -58,12 +51,18 @@ public class Solution {
         boolean checkTwoStepsAhead = isOption(row, col + 2, m, n, puzzleGrid);
         boolean checkTwoStepsBack = isOption(row, col - 2, m, n, puzzleGrid);
         if (checkTwoStepsAhead) {
-            int[] x1Ahead = new int[]{-1, 1};
-            int[] y1Ahead = new int[]{1, 1};
-            matches += getMatches(row, col, puzzleGrid, word, x1Ahead, y1Ahead, x2Ahead, y2Ahead);
+            int[] x1 = new int[]{-1, 1};
+            int[] y1 = new int[]{1, 1};
+            int[] x2 = new int[]{-1, 1};
+            int[] y2 = new int[]{-1, -1};
+            matches += getMatches(row, col, puzzleGrid, word, x1, y1, x2, y2);
         }
         if (checkTwoStepsBack) {
-            matches += getMatches(row, col, puzzleGrid, word, x1Back, y1Back, x2Back, y2Back);
+            int[] x1 = new int[]{-1, 1};
+            int[] y1 = new int[]{-1, -1};
+            int[] x2 = new int[]{-1, 1};
+            int[] y2 = new int[]{1, 1};
+            matches += getMatches(row, col, puzzleGrid, word, x1, y1, x2, y2);
         }
         return matches;
     }
