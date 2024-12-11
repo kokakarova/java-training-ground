@@ -72,10 +72,9 @@ public class Solution {
     private void fixOrder(int[] updateArray) {
         int len = updateArray.length;
         int[] newOrder = updateArray.clone();
-        int i, j;
         boolean inOrder = false;
         while (!inOrder) {
-            for (i = 0; i < len - 1; i++) {
+            for (int i = 0; i < len - 1; i++) {
                 if (isInWrongOrder(newOrder[i], newOrder[i + 1])) {
                     int transit = newOrder[i];
                     newOrder[i] = newOrder[i + 1];
