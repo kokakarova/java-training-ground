@@ -23,7 +23,7 @@ public class Solution {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 if (!savingRulesDone && !line.isEmpty()) {
-                // save rules in map
+                    // save rules in map
 //                    System.out.println("saving rules");
 //                    System.out.println("line = " + line);
                     saveRulesToHashMap(line);
@@ -32,6 +32,7 @@ public class Solution {
                     // process line
 //                    System.out.println("processing updates");
 //                    System.out.println("line = " + line);
+                    processUpdates(line);
                 }
                 if (line.isEmpty()) {
                     savingRulesDone = true;
@@ -45,12 +46,29 @@ public class Solution {
         }
     }
 
+    private void processUpdates(String line) {
+        String[] updateArray = line.split(",");
+        int len = updateArray.length;
+        boolean inRightOrder = true;
+        for (int i = 0; i < len; i++) {
+            Integer num1 = Integer.parseInt(updateArray[i]);
+            for (int j = i + 1; j < len; j++) {
+                Integer num2 = Integer.parseInt(updateArray[j]);
+                if ((rulesMap.containsKey(num1) && !rulesMap.get(num1).contains(num2))
+                        || (rulesMap.containsKey(num2) && rulesMap.get(num2).contains(num1))) {
+                    inRightOrder = false;
+                }
+            }
+        }
+        if (inRightOrder) {
+            sumOfMiddles += Integer.parseInt(updateArray[len / 2]);
+        }
+    }
+
     private void saveRulesToHashMap(String line) {
         String[] parts = line.split("[|]");
         Integer num1 = Integer.parseInt(parts[0]);
         Integer num2 = Integer.parseInt(parts[1]);
-//        System.out.println("num1 = " + num1);
-//        System.out.println("num2 = " + num2);
         if (!rulesMap.containsKey(num1)) {
             List<Integer> rulesList = new ArrayList<>();
             rulesList.add(num2);
