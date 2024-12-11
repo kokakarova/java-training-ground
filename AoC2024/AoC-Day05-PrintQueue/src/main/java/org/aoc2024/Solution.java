@@ -16,28 +16,28 @@ public class Solution {
     private Map<Integer, List<Integer>> rulesMap = new HashMap<>();
     private Integer sumOfMiddles = 0;
 
-    public void getSolution(String fileName) {
+    public void getSolution(String fileName, int partNumber) {
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             boolean savingRulesDone = false;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 if (!savingRulesDone && !line.isEmpty()) {
-                    // save rules in map
-//                    System.out.println("saving rules");
-//                    System.out.println("line = " + line);
                     saveRulesToHashMap(line);
                 }
                 if (savingRulesDone && !line.isEmpty()) {
-                    // process line
-//                    System.out.println("processing updates");
-//                    System.out.println("line = " + line);
-                    processUpdates(line);
+                    int[] updateArray = getIntArray(line);
+                    System.out.println("line = " + line);
+                    boolean inRightOrder = checkOrder(updateArray);
+                    if (inRightOrder && partNumber == 1) {
+                        int len = updateArray.length;
+                        sumOfMiddles += updateArray[len / 2];
+                    } else if (partNumber == 2 && !inRightOrder) {
+                        fixOrder(updateArray);
+                    }
                 }
                 if (line.isEmpty()) {
                     savingRulesDone = true;
-//                    System.out.println("empty line");
-//                    System.out.println("line = " + line);
                 }
             }
 
@@ -46,23 +46,50 @@ public class Solution {
         }
     }
 
-    private void processUpdates(String line) {
+    private int[] getIntArray(String line) {
         String[] updateArray = line.split(",");
+        int[] updateArrayInt = new int[updateArray.length];
+        for (int i = 0; i < updateArrayInt.length; i++) {
+            updateArrayInt[i] = Integer.parseInt(updateArray[i]);
+        }
+        return updateArrayInt;
+    }
+
+    private boolean checkOrder(int[] updateArray) {
         int len = updateArray.length;
-        boolean inRightOrder = true;
         for (int i = 0; i < len; i++) {
-            Integer num1 = Integer.parseInt(updateArray[i]);
+            int num1 = updateArray[i];
             for (int j = i + 1; j < len; j++) {
-                Integer num2 = Integer.parseInt(updateArray[j]);
-                if ((rulesMap.containsKey(num1) && !rulesMap.get(num1).contains(num2))
-                        || (rulesMap.containsKey(num2) && rulesMap.get(num2).contains(num1))) {
-                    inRightOrder = false;
+                int num2 = updateArray[j];
+                if (isInWrongOrder(num1, num2)) {
+                    return false;
                 }
             }
         }
-        if (inRightOrder) {
-            sumOfMiddles += Integer.parseInt(updateArray[len / 2]);
+        return true;
+    }
+
+    private void fixOrder(int[] updateArray) {
+        int len = updateArray.length;
+        int[] newOrder = updateArray.clone();
+        int i, j;
+        boolean inOrder = false;
+        while (!inOrder) {
+            for (i = 0; i < len - 1; i++) {
+                if (isInWrongOrder(newOrder[i], newOrder[i + 1])) {
+                    int transit = newOrder[i];
+                    newOrder[i] = newOrder[i + 1];
+                    newOrder[i + 1] = transit;
+                }
+            }
+            inOrder = checkOrder(newOrder);
         }
+        sumOfMiddles += newOrder[len / 2];
+    }
+
+    private boolean isInWrongOrder(Integer num1, Integer num2) {
+        return (rulesMap.containsKey(num1) && !rulesMap.get(num1).contains(num2))
+                || (rulesMap.containsKey(num2) && rulesMap.get(num2).contains(num1));
     }
 
     private void saveRulesToHashMap(String line) {
