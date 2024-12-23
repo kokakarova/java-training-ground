@@ -8,4 +8,6 @@ import lombok.Data;
 public class StartingGrid {
     private char[][] grid;
     private int[] startingPosition;
+    private int[] nextToStartingPosition;
+
 }

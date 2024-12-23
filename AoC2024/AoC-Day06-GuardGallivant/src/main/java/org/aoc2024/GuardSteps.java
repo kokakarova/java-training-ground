@@ -14,7 +14,7 @@ public class GuardSteps {
     public void countGuardSteps(StartingGrid grid, int movement) {
         nav.setMovement(movement);
         nav.setCurrentStep(grid.getStartingPosition());
-        nav.setNextStep(nav.getNextStep(nav.getCurrentStep(), movement));
+        nav.setNextStep(grid.getNextToStartingPosition());
 
         List<String> visitedPositions = new ArrayList<>();
         int len = grid.getGrid().length;
@@ -28,14 +28,14 @@ public class GuardSteps {
                 char charAtNextStep = grid.getGrid()[nav.getNextStep()[0]][nav.getNextStep()[1]];
                 if (charAtNextStep == '.') {
                     nav.setCurrentStep(nav.getNextStep());
-                    nav.setNextStep(nav.getNextStep(nav.getCurrentStep(), movement));
+                    nav.setNextStep(nav.updateNextStep(nav.getCurrentStep(), movement));
                     if (!visitedPositions.contains(nav.getCurrentStep()[0] + "," + nav.getCurrentStep()[1])) {
                         stepsCount++;
                         visitedPositions.add(nav.getCurrentStep()[0] + "," + nav.getCurrentStep()[1]);
                     }
                 } else {
                     movement = nav.updateMovementDirection(movement);
-                    nav.setNextStep(nav.getNextStep(nav.getCurrentStep(), movement));
+                    nav.setNextStep(nav.updateNextStep(nav.getCurrentStep(), movement));
                 }
             }
         }

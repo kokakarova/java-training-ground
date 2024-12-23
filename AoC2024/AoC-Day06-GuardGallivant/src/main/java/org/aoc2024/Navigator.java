@@ -13,7 +13,7 @@ public class Navigator {
         return movement == 3 ? 0 : movement + 1;
     }
 
-    public int[] getNextStep(int[] currentPosition, int movement) {
+    public int[] updateNextStep(int[] currentPosition, int movement) {
         int[][] movingDirections = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
         return new int[]{currentPosition[0] + movingDirections[movement][0], currentPosition[1] + movingDirections[movement][1]};
     }

@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 @Data
 public class FileReader {
 
+    Navigator nav = new Navigator();
     public StartingGrid getPatrolGrid(String fileName, int rows, int cols) {
         char[][] grid = new char[rows][cols];
         int[] startPosition = new int[2];
@@ -34,6 +35,7 @@ public class FileReader {
                 IOException e) {
             e.printStackTrace();
         }
-        return new StartingGrid(grid, startPosition);
+        int[] nextPosition = nav.updateNextStep(startPosition, 0);
+        return new StartingGrid(grid, startPosition, nextPosition);
     }
 }
