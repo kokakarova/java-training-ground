@@ -22,7 +22,7 @@ public class GuardSteps {
         String visited = nav.getCurrentStep()[0] + "," + nav.getCurrentStep()[1];
         visitedPositions.add(visited);
         while (inScope) {
-            if (!nav.checkStepScope(nav.getNextStep(), len)) {
+            if (nav.outOfScope(nav.getNextStep(), len)) {
                 inScope = false;
             } else {
                 char charAtNextStep = grid.getGrid()[nav.getNextStep()[0]][nav.getNextStep()[1]];
