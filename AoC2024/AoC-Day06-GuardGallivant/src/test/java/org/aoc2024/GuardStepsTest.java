@@ -19,14 +19,4 @@ class GuardStepsTest {
         assertEquals(expectedResult, guardSteps.stepsCount);
     }
 
-//    @Test
-//    void shouldReturn6_forPuzzleTest_Part2() {
-//        int expectedResult = 6;
-//        int rows = 10;
-//        int cols = 10;
-//        char[][] grid = fileReader.getPatrolGrid(fileName, rows, cols);
-//        guardSteps.countGuardSteps(grid, 2, 0);
-//        assertEquals(expectedResult, guardSteps.obstaclesCount);
-//    }
-
 }
