@@ -3,12 +3,15 @@ package org.aoc2024;
 
 public class Main {
     public static void main(String[] args) {
-        Solution solution = new Solution();
+        GuardSteps guardSteps = new GuardSteps();
+        FileReader fileReader = new FileReader();
         int rows = 130;
         int cols = 130;
         String fileName = "puzzle.txt";
-        char[][] grid = solution.getPatrolGrid(fileName, rows, cols);
-        solution.getSolution(grid);
-        System.out.println("PART_1 solution ----> " + solution.stepsCount);
+        StartingGrid grid = fileReader.getPatrolGrid(fileName, rows, cols);
+        guardSteps.countGuardSteps(grid, 0);
+        System.out.println("PART_1 solution ----> " + guardSteps.stepsCount);
+//        solutionPart1.getSolution(grid, 2, 0);
+//        System.out.println("PART_2 solution ----> " + solutionPart1.stepsCount);
     }
 }
