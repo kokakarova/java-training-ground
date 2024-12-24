@@ -18,28 +18,32 @@ public class Obstacles {
         System.out.println("nav.getMovement() = " + nav.getMovement());
         int len = startingGrid.getGrid().length;
         boolean inScope = true;
-        int uniqueStepCount = 1;
+        int allStepCount = 1;
         List<String> visitedPositions = new ArrayList<>();
         if (isSubGrid) {
             visitedPositions.add(nav.getCurrentStep()[0] + ", " + nav.getCurrentStep()[1]);
         }
         while (inScope) {
             if (nav.outOfScope(nav.getNextStep(), len)) {
-                System.out.println(" OUT_OF_SCOPE " );
+                System.out.println(" OUT_OF_SCOPE ");
                 inScope = false;
             } else {
                 char charAtNextStep = startingGrid.getGrid()[nav.getNextStep()[0]][nav.getNextStep()[1]];
                 if (charAtNextStep == '.') {
                     if (!isSubGrid) {
-                        char[][] newGrid = startingGrid.getGrid().clone();
-                        newGrid[nav.getCurrentStep()[0]][nav.getCurrentStep()[1]] = '.';
-                        newGrid[nav.getNextStep()[0]][nav.getNextStep()[1]] = '#';
-                        int subMovement = nav.updateMovementDirection(nav.getMovement());
-                        int[] subNextStep = nav.updateNextStep(nav.getCurrentStep(), subMovement);
-                        StartingGrid subGrid = new StartingGrid(newGrid, nav.getCurrentStep(), subNextStep);
-                        Navigator subNav = new Navigator(subMovement, nav.getCurrentStep(), subNextStep);
-                        // recursive call with altered grid
-                        countObstacles(subGrid, subNav, true);
+                        if (!visitedPositions.contains(nav.getCurrentStep()[0] + ", " + nav.getCurrentStep()[1])) {
+                            char[][] newGrid = startingGrid.getGrid().clone();
+                            newGrid[nav.getCurrentStep()[0]][nav.getCurrentStep()[1]] = '.';
+                            newGrid[nav.getNextStep()[0]][nav.getNextStep()[1]] = '#';
+                            int subMovement = nav.updateMovementDirection(nav.getMovement());
+                            int[] subNextStep = nav.updateNextStep(nav.getCurrentStep(), subMovement);
+                            StartingGrid subGrid = new StartingGrid(newGrid, nav.getCurrentStep(), subNextStep);
+                            Navigator subNav = new Navigator(subMovement, nav.getCurrentStep(), subNextStep);
+                            // recursive call with altered grid
+                            countObstacles(subGrid, subNav, true);
+
+                            visitedPositions.add(nav.getCurrentStep()[0] + ", " + nav.getCurrentStep()[1]);
+                        }
                         // update currentStep and NextStep
                         nav.setCurrentStep(nav.getNextStep());
                         nav.setNextStep(nav.updateNextStep(nav.getCurrentStep(), nav.getMovement()));
@@ -48,10 +52,10 @@ public class Obstacles {
                         nav.setCurrentStep(nav.getNextStep());
                         nav.setNextStep(nav.updateNextStep(nav.getCurrentStep(), nav.getMovement()));
 
-                            visitedPositions.add(nav.getCurrentStep()[0] + ", " + nav.getCurrentStep()[1]);
+                        visitedPositions.add(nav.getCurrentStep()[0] + ", " + nav.getCurrentStep()[1]);
 
-                        if (samePositions(startingGrid, nav) || visitedPositions.size() > 5153) {
-                            System.out.println(" # POTENTIAL OBSTACLE # " );
+                        if (samePositions(startingGrid, nav) || visitedPositions.size() > 2499) {
+                            System.out.println(" # POTENTIAL OBSTACLE # ");
                             obstacleCount++;
                             inScope = false;
                         }
@@ -76,8 +80,10 @@ public class Obstacles {
     }
 
     public boolean samePositions(StartingGrid startingGrid, Navigator nav) {
-        boolean sameX = startingGrid.getStartingPosition()[0] == nav.getCurrentStep()[0];
-        boolean sameY = startingGrid.getStartingPosition()[1] == nav.getCurrentStep()[1];
-        return sameX && sameY;
+        boolean sameCurrX = startingGrid.getStartingPosition()[0] == nav.getCurrentStep()[0];
+        boolean sameCurrY = startingGrid.getStartingPosition()[1] == nav.getCurrentStep()[1];
+        boolean sameNextX = nav.getNextStep()[0] == nav.getCurrentStep()[0];
+        boolean sameNextY = nav.getNextStep()[1] == nav.getCurrentStep()[1];
+        return sameCurrX && sameCurrY && sameNextX && sameNextY;
     }
 }

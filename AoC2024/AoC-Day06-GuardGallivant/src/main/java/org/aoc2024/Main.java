@@ -12,9 +12,11 @@ public class Main {
         StartingGrid grid = fileReader.getPatrolGrid(fileName, rows, cols);
 //        guardSteps.countGuardSteps(grid, 0);
 //        System.out.println("PART_1 solution ----> " + guardSteps.stepsCount);
+//        System.out.println("guardSteps.allStepsCount = " + guardSteps.allStepsCount);
 
         Navigator nav = new Navigator(0, grid.getStartingPosition(), grid.getNextToStartingPosition());
         obstacles.countObstacles(grid,nav, false);
         System.out.println("PART_2 solution ----> " + obstacles.getObstacleCount());
     }
 }
+// 1903, 1887, 853, 1710 incorrect

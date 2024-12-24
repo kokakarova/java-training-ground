@@ -10,6 +10,7 @@ public class GuardSteps {
 
     Navigator nav = new Navigator();
     int stepsCount = 1;
+    int allStepsCount = 1;
 
     public void countGuardSteps(StartingGrid grid, int movement) {
         nav.setMovement(movement);
@@ -33,6 +34,7 @@ public class GuardSteps {
                         stepsCount++;
                         visitedPositions.add(nav.getCurrentStep()[0] + "," + nav.getCurrentStep()[1]);
                     }
+                    allStepsCount++;
                 } else {
                     movement = nav.updateMovementDirection(movement);
                     nav.setNextStep(nav.updateNextStep(nav.getCurrentStep(), movement));
