@@ -18,7 +18,6 @@ public class Obstacles {
         System.out.println("nav.getMovement() = " + nav.getMovement());
         int len = startingGrid.getGrid().length;
         boolean inScope = true;
-        int allStepCount = 1;
         List<String> visitedPositions = new ArrayList<>();
         if (isSubGrid) {
             visitedPositions.add(nav.getCurrentStep()[0] + ", " + nav.getCurrentStep()[1]);

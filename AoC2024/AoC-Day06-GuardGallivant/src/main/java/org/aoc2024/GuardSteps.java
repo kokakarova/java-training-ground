@@ -42,18 +42,6 @@ public class GuardSteps {
             }
         }
     }
-
-//    private boolean loopCompleted(int[] currentStepCoords, int[] nextStepCoords) {
-//        return Arrays.equals(currentStepCoords, startPosition) && Arrays.equals(nextStepCoords, nextStepFromStartingPosition);
-//    }
-
-//    private int getMovementForSubGrid(int[] currentStepCoords, int[] nextStepCoords) {
-//        if (currentStepCoords[0] == nextStepCoords[0]) {
-//            return currentStepCoords[1] > nextStepCoords[1] ? 0 : 2;
-//        }
-//        return currentStepCoords[0] > nextStepCoords[0] ? 1 : 3;
-//
-//    }
 }
 
 
