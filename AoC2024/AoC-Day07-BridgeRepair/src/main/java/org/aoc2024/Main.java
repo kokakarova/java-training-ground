@@ -9,7 +9,7 @@ public class Main {
         long startTime = System.currentTimeMillis();
         String fileName = "puzzle.txt";
         InputProcessor ip = new InputProcessor();
-        ip.readEquationsFromInput(fileName);
+        ip.readEquationsFromInput(fileName, 1);
         System.out.println("Part 1 RESULT ---> " + Equation.validEquations);
         long endTime   = System.currentTimeMillis();
         NumberFormat formatter = new DecimalFormat("#0.00000");
