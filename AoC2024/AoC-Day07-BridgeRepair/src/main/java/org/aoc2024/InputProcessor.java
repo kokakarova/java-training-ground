@@ -16,10 +16,7 @@ public class InputProcessor {
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-            Equation equation = new Equation();
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                System.out.println("========================");
-                System.out.println("line = " + line);
                 processEquationLine(line, partNumber);
             }
         } catch (
@@ -51,18 +48,20 @@ public class InputProcessor {
 
     public boolean checkForAllOperatorsPermutationsRecursive(int i, long[] arr, int opPlaces, Equation equation, int partNumber) {
         if (i == opPlaces) {
-            return equation.isValidEquation(equation, arr, partNumber);
+            return equation.isValidEquation(equation, arr);
         }
         arr[i] = 0;
         if (checkForAllOperatorsPermutationsRecursive(i + 1, arr, opPlaces, equation, partNumber)) {
             return true;
         }
         arr[i] = 1;
-        boolean res = checkForAllOperatorsPermutationsRecursive(i + 1, arr, opPlaces, equation, partNumber);
+        if (checkForAllOperatorsPermutationsRecursive(i + 1, arr, opPlaces, equation, partNumber)) {
+            return true;
+        }
         if (partNumber == 2) {
             arr[i] = 2;
             return checkForAllOperatorsPermutationsRecursive(i + 1, arr, opPlaces, equation, partNumber);
         }
-        return res;
+        return false;
     }
 }
