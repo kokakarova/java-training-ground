@@ -55,7 +55,16 @@ class PuzzleProcessorTest {
     void shouldGetListSize14_forPuzzleTest_Part1() {
         pp.readAntennasFromInput(fileName);
         int expectedSize = 14;
-        assertEquals(expectedSize, pp.findAntinodesForAllAntennas().size());
+        assertEquals(expectedSize, pp.findAntinodesForAllAntennas(1).size());
+    }
+
+    @Test
+    void shouldGetListSize34_forPuzzleTest_Part2() {
+        pp.readAntennasFromInput(fileName);
+        int expectedSize = 34;
+        Set<String> antinodesString = pp.findAntinodesForAllAntennas(2);
+        int countUnmatchedAntennas = pp.addUnmatchedAntennaPositions(antinodesString);
+        assertEquals(expectedSize, antinodesString.size() + countUnmatchedAntennas);
     }
 
 }
