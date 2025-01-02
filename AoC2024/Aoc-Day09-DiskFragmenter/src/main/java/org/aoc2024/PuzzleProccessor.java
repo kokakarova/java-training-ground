@@ -1,7 +1,6 @@
 package org.aoc2024;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.util.List;
 @Data
 public class PuzzleProccessor {
 
-    public List<Integer> readAntennasFromInput(String fileName) {
+    public List<Integer> readFromInputFile(String fileName) {
         List<Integer> disk = new ArrayList<>();
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
@@ -48,4 +47,35 @@ public class PuzzleProccessor {
         return newList;
     }
 
+    public List<Integer> processFileCompacting(List<Integer> diskList) {
+        int endFileIndex = getIndexOfFileAtEnd(diskList);
+        final int SPACE_MARK = -1;
+        int indexOfFirstSpace = diskList.indexOf(SPACE_MARK);
+        while (indexOfFirstSpace < endFileIndex) {
+            diskList.set(indexOfFirstSpace, diskList.get(endFileIndex));
+            diskList.set(endFileIndex, SPACE_MARK);
+            endFileIndex = getIndexOfFileAtEnd(diskList);
+            indexOfFirstSpace = diskList.indexOf(SPACE_MARK);
+        }
+        return diskList;
+    }
+
+    private int getIndexOfFileAtEnd(List<Integer> diskList) {
+        for (int i = diskList.size() - 1; i >= 0; i--) {
+            if (diskList.get(i) != -1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public long getFilesystemCheckSum(List<Integer> diskList) {
+        long checkSum = 0;
+        for (int i = 0; i < diskList.size(); i++) {
+            if (diskList.get(i) != -1) {
+                checkSum += diskList.get(i) * i;
+            }
+        }
+        return checkSum;
+    }
 }
