@@ -7,35 +7,45 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class PuzzleProccessor {
 
-    public String readAntennasFromInput(String fileName) {
-        StringBuilder result = new StringBuilder();
+    public List<Integer> readAntennasFromInput(String fileName) {
+        List<Integer> disk = new ArrayList<>();
         try (InputStream file = Main.class.getClassLoader().getResourceAsStream(fileName)) {
             assert file != null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
-            int i = 0;
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                char c = line.charAt(i);
-                result.append(Character.getNumericValue(c) % 2 == 0
-                        ? StringUtils.repeat(c, i)
-                        : StringUtils.repeat(".", i));
-                i++;
+                for (int i = 0, j = 0; i < line.length(); i++, j++) {
+                    int charAsInt = Character.getNumericValue(line.charAt(i));
+                    // add charAsInt to places as id
+                    disk.addAll(addFileToString(j, charAsInt));
+                    i++;
+                    // add -1 for empty space
+                    if (i < line.length() - 1) {
+                        int nextCharAsInt = Character.getNumericValue(line.charAt(i));
+                        if (nextCharAsInt > 0) {
+                            disk.addAll(addFileToString(-1, nextCharAsInt));
+                        }
+                    }
+                }
             }
         } catch (
                 IOException e) {
             e.printStackTrace();
         }
-        return result.toString();
+        return disk;
     }
 
-    public String addSpaceToString(int i) {
-        return StringUtils.repeat(".", i);
+    public List<Integer> addFileToString(int numberToAdd, int timesToRepeat) {
+        List<Integer> newList = new ArrayList<>();
+        for (int i = 0; i < timesToRepeat; i++) {
+            newList.add(numberToAdd);
+        }
+        return newList;
     }
 
-    public String addFileToString(int i, char c) {
-        return StringUtils.repeat(c, i);
-    }
 }
