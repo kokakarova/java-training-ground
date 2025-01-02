@@ -1,6 +1,5 @@
 package org.aoc2024;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -8,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AntennaPairTest {
 
-    // do parameterized test
     @ParameterizedTest
     @CsvSource({
             "15,39,20,30,5,-9",
