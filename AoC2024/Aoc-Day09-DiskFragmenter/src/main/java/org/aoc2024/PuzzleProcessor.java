@@ -20,10 +20,8 @@ public class PuzzleProcessor {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 for (int i = 0, j = 0; i < line.length(); i++, j++) {
                     int charAsInt = Character.getNumericValue(line.charAt(i));
-                    // add charAsInt to places as id
                     disk.addAll(addFileToString(j, charAsInt));
                     i++;
-                    // add -1 for empty space
                     if (i < line.length() - 1) {
                         int nextCharAsInt = Character.getNumericValue(line.charAt(i));
                         if (nextCharAsInt > 0) {
@@ -82,12 +80,8 @@ public class PuzzleProcessor {
     public List<Integer> processFileCompactingPart2(List<Integer> diskList) {
         int rightMostFileId = getIndexOfOneFilePartAtEnd(diskList);
         while (rightMostFileId >= 0) {
-//             diskList = exploreCompactingForFileId(rightMostFileId);
-            // get right-most file chunk (indexes)
             List<Integer> wholeFileIndexes = getIndexesForFileId(diskList, rightMostFileId);
-            // find fitting free space chunk from left to right (indexes)
             List<Integer> freeSpaceChunks = getAvailableFreeSpaceChunk(diskList, wholeFileIndexes.size(), diskList.indexOf(rightMostFileId));
-            // rearrange file chunk and free space chunk
             if (!freeSpaceChunks.isEmpty() && freeSpaceChunks.getFirst() < wholeFileIndexes.getFirst()) {
                 diskList = replaceSpaceWithFile(diskList, rightMostFileId, freeSpaceChunks);
                 diskList = replaceFileIndexesWithSpace(diskList, wholeFileIndexes);

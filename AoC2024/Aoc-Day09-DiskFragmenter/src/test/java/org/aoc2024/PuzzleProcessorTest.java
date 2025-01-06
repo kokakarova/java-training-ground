@@ -2,7 +2,6 @@ package org.aoc2024;
 
 import org.junit.jupiter.api.Test;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,6 @@ class PuzzleProcessorTest {
     @Test
     void shouldReturn_ExpectedForPuzzleTest_Part1() {
         PuzzleProcessor processor = new PuzzleProcessor();
-//        String expected = "00...111...2...333.44.5555.6666.777.888899";
         List<Integer> expected = List.of(0, 0, -1, -1, -1, 1, 1, 1, -1, -1, -1, 2, -1, -1, -1, 3, 3, 3, -1, 4, 4, -1, 5, 5, 5, 5, -1, 6, 6, 6, 6, -1, 7, 7, 7, -1, 8, 8, 8, 8, 9, 9);
         String fileName = "puzzleTest.txt";
         assertEquals(expected, processor.readFromInputFile(fileName));
@@ -29,7 +27,6 @@ class PuzzleProcessorTest {
     @Test
     void shouldReturn_ExpectedForPuzzleTest2_Part1() {
         PuzzleProcessor processor = new PuzzleProcessor();
-//        String expected = "0..111....22222";
         List<Integer> expected = List.of(0, -1, -1, 1, 1, 1, -1, -1, -1, -1, 2, 2, 2, 2, 2);
         String fileName = "puzzleTest2.txt";
         assertEquals(expected, processor.readFromInputFile(fileName));
@@ -38,7 +35,6 @@ class PuzzleProcessorTest {
     @Test
     void shouldReturn_ExpectedArrangedDiskList_ForPuzzleTest2_Part1() {
         PuzzleProcessor processor = new PuzzleProcessor();
-//        String expected = "022111222......";
         List<Integer> expected = List.of(0, 2, 2, 1, 1, 1, 2, 2, 2, -1, -1, -1, -1, -1, -1);
         String fileName = "puzzleTest2.txt";
         List<Integer> initialProcessedDiskList = processor.readFromInputFile(fileName);
@@ -48,7 +44,6 @@ class PuzzleProcessorTest {
     @Test
     void shouldReturn_ExpectedArrangedDiskList_ForPuzzleTest_Part1() {
         PuzzleProcessor processor = new PuzzleProcessor();
-//        String expected = "0099811188827773336446555566..............";
         List<Integer> expected = List.of(0, 0, 9, 9, 8, 1, 1, 1, 8, 8, 8, 2, 7, 7, 7, 3, 3, 3, 6, 4, 4, 6, 5, 5, 5, 5, 6, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
         String fileName = "puzzleTest.txt";
         List<Integer> initialProcessedDiskList = processor.readFromInputFile(fileName);
@@ -137,19 +132,9 @@ class PuzzleProcessorTest {
     void shouldReturn_ExpectedList_ForPuzzleTest_Part2() {
         PuzzleProcessor processor = new PuzzleProcessor();
         String fileName = "puzzleTest.txt";
-//        String expectedString = "00992111777.44.333....5555.6666.....8888..";
         List<Integer> expected = List.of(0, 0, 9, 9, 2, 1, 1, 1, 7, 7, 7, -1, 4, 4, -1, 3, 3, 3, -1, -1, -1, -1, 5, 5, 5, 5, -1, 6, 6, 6, 6, -1, -1, -1, -1, -1, 8, 8, 8, 8, -1, -1);
         List<Integer> initialProcessedDiskList = processor.readFromInputFile(fileName);
-        System.out.println("initialProcessedDiskList:");
-        for (Integer i : initialProcessedDiskList) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
         List<Integer> processedDiskList = processor.processFileCompactingPart2(initialProcessedDiskList);
-        System.out.println("processedDiskList");
-        for (Integer i : processedDiskList) {
-            System.out.print(i + " ");
-        }
         assertEquals(expected.size(), processedDiskList.size());
         assertEquals(expected, processedDiskList);
     }

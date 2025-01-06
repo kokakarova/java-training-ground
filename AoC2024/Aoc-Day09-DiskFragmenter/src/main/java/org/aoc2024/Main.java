@@ -20,5 +20,6 @@ public class Main {
         long endTime   = System.currentTimeMillis();
         NumberFormat formatter = new DecimalFormat("#0.00000");
         System.out.print("Execution time is " + formatter.format((endTime - startTime) / 1000d) + " seconds");
+        System.out.println("NOTE: IF YOU GOT SAME ANSWER FOR PART 1 AND PART 2 TRY RUNNING THEM SEPARATELY (comment one out)");
     }
 }
