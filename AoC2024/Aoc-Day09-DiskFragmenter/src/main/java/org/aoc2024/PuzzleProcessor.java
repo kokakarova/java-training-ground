@@ -86,7 +86,7 @@ public class PuzzleProcessor {
             // get right-most file chunk (indexes)
             List<Integer> wholeFileIndexes = getIndexesForFileId(diskList, rightMostFileId);
             // find fitting free space chunk from left to right (indexes)
-            List<Integer> freeSpaceChunks = getAvailableFreeSpaceChunk(diskList, wholeFileIndexes.size());
+            List<Integer> freeSpaceChunks = getAvailableFreeSpaceChunk(diskList, wholeFileIndexes.size(), diskList.indexOf(rightMostFileId));
             // rearrange file chunk and free space chunk
             if (!freeSpaceChunks.isEmpty() && freeSpaceChunks.getFirst() < wholeFileIndexes.getFirst()) {
                 diskList = replaceSpaceWithFile(diskList, rightMostFileId, freeSpaceChunks);
@@ -111,15 +111,16 @@ public class PuzzleProcessor {
         return diskList;
     }
 
-    public List<Integer> getAvailableFreeSpaceChunk(List<Integer> diskList, int size) {
+    public List<Integer> getAvailableFreeSpaceChunk(List<Integer> diskList, int size, int fileIdIndex) {
         int index = diskList.indexOf(-1);
         List<Integer> freeSpaceChunks = new ArrayList<>();
-        while (freeSpaceChunks.size() < size && index != -1) {
+        while (freeSpaceChunks.size() < size && index != -1 && index < fileIdIndex) {
             freeSpaceChunks.add(index);
-            if (diskList.get(index + 1) == -1) {
-                index++;
-            } else {
-                index = -1;
+            index++;
+            if (diskList.get(index) != -1 && freeSpaceChunks.size() < size) {
+                freeSpaceChunks.clear();
+                int indexOfSpaceInSublist = diskList.subList(index, diskList.size()).indexOf(-1);
+                index = indexOfSpaceInSublist == -1 ? indexOfSpaceInSublist : indexOfSpaceInSublist + index;
             }
         }
         return freeSpaceChunks.size() == size ? freeSpaceChunks : new ArrayList<>();
