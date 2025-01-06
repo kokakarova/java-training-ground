@@ -81,9 +81,9 @@ class PuzzleProcessorTest {
     @Test
     void shouldReturn_ListOf3_ForInputList_0neg1neg1neg10() {
         PuzzleProcessor processor = new PuzzleProcessor();
-        List<Integer> distTest = List.of(0, -1, -1, -1, 0);
+        List<Integer> distTest = List.of(0, -1, -1, -1, 1);
         List<Integer> expectedList = List.of(1, 2, 3);
-        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 3);
+        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 3, 4);
         assertEquals(expectedList.size(), actualResult.size());
         assertEquals(expectedList.get(0), actualResult.get(0));
         assertEquals(expectedList.get(1), actualResult.get(1));
@@ -94,15 +94,15 @@ class PuzzleProcessorTest {
     void shouldReturn_ListOf0_ForInputList_01110() {
         PuzzleProcessor processor = new PuzzleProcessor();
         List<Integer> distTest = List.of(0, 1, 1, 1, 0);
-        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 3);
+        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 3, 4);
         assertEquals(0, actualResult.size());
     }
 
     @Test
     void shouldReturn_ListOf2_ForInputList_neg1neg1neg110_AndSize2() {
         PuzzleProcessor processor = new PuzzleProcessor();
-        List<Integer> distTest = List.of(-1, -1, -1, 1, 0);
-        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 2);
+        List<Integer> distTest = List.of(-1, -1, -1, 0, 1);
+        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 2, 4);
         assertEquals(2, actualResult.size());
     }
 
@@ -110,10 +110,29 @@ class PuzzleProcessorTest {
     void shouldReturn_ListOf2_ForInputList_0neg1neg1neg110_AndSize2() {
         PuzzleProcessor processor = new PuzzleProcessor();
         List<Integer> distTest = List.of(0, -1, -1, -1, 1, 1);
-        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 2);
+        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 2, 5);
         assertEquals(2, actualResult.size());
     }
 
+    @Test
+    void shouldReturn_ListOf2_ForInputList_0neg11neg1neg12_AndSize2() {
+        PuzzleProcessor processor = new PuzzleProcessor();
+        List<Integer> distTest = List.of(0, -1, 1, -1, -1, 2);
+        int firstFileIdIndex = 5;
+        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 2, firstFileIdIndex);
+        assertEquals(2, actualResult.size());
+    }
+
+    @Test
+    void shouldReturn_ListOf0_ForInputList_0neg112neg1neg1_AndSize2() {
+        PuzzleProcessor processor = new PuzzleProcessor();
+        List<Integer> distTest = List.of(0, -1, 1, 1, -1, -1);
+        int firstFileIdIndex = 2;
+        List<Integer> actualResult = processor.getAvailableFreeSpaceChunk(distTest, 2, firstFileIdIndex);
+        assertEquals(0, actualResult.size());
+    }
+
+    // processFileCompactingPart2
     @Test
     void shouldReturn_ExpectedList_ForPuzzleTest_Part2() {
         PuzzleProcessor processor = new PuzzleProcessor();
@@ -132,6 +151,7 @@ class PuzzleProcessorTest {
             System.out.print(i + " ");
         }
         assertEquals(expected.size(), processedDiskList.size());
+        assertEquals(expected, processedDiskList);
     }
 
     @Test
@@ -143,8 +163,6 @@ class PuzzleProcessorTest {
         List<Integer> processedDiskList = processor.processFileCompactingPart2(initialProcessedDiskList);
         assertEquals(expected, processor.getFilesystemCheckSum(processedDiskList));
     }
-
-    // test for processFileCompactingPart2
 
     // replaceSpaceWithFile
     @Test
