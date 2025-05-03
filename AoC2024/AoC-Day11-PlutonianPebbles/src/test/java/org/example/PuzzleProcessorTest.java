@@ -16,6 +16,7 @@ class PuzzleProcessorTest {
     @BeforeEach
     void setUp() {
         PuzzleProcessor.stonesList.clear();
+        PuzzleProcessor.stonesMap.clear();
     }
 
     @Test
